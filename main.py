@@ -7,12 +7,15 @@ from uuid import uuid4
 # トランザクションに関する関数
 class transaction:
     # blockchainの初期化関数
-    def __init__(self):
+    def __init__(self, name, date, time, status):
         self.pending_transactions = []
+        self.name= name
+        self.date=date
+        self.time=time
+        self.status=status
 
     # トランザクションを生成する関数
-    def create_transaction(self, name, date, time, status):
-        
+    def create_transaction(self):
         # データの収得
         name = "Yuki Kato"
         # 時間の取得
@@ -30,65 +33,30 @@ class transaction:
             "status": status
         }
         # JSONファイルへの書き込み
-        with open('./transaction/transaction.json', 'w') as json_file:
+        with open('./data/transaction.json', 'w') as json_file:
             json.dump(transaction, json_file, indent=2)
 
     # トランザクションをブロードキャストする関数
     def broadcast_transaction(self, transaction):
+        #########################
+        # ソケット通信でのブロードキャスト
+        # コードはまだ書いていない
+        #########################
         self.pending_transactions.append(transaction)
 
 # ブロック単体に関するオブジェクトクラス
 class Block:
     # blockクラスの初期化関数
-    def __init__(self, index, transactions, previous_hash, timestamp=None, nonce=0):
-        self.index = index
-        self.transactions = transactions
-        self.previous_hash = previous_hash
-        self.timestamp = timestamp or time()
-        self.nonce = nonce
-        self.hash = self.calculate_hash()
+    def __init__(self, transactionX):
+        self.transactionX=transactionX
 
-    # ハッシュ値を計算する関数
-    def calculate_hash(self):
-        # 各属性を構造体にする
-        block_string = json.dumps({
-            "index": self.index,
-            "transactions": self.transactions,
-            "previous_hash": self.previous_hash,
-            "timestamp": self.timestamp,
-            "nonce": self.nonce
-        }, sort_keys=True).encode('utf-8')
-
-        # 上記の構造体をハッシュ化
-        return hashlib.sha256(block_string).hexdigest()
-
-    # ブロックのマイニング
-    def mine_block(self, difficulty):
-        while self.hash[:difficulty] != '0' * difficulty:
-            self.nonce += 1
-            self.hash = self.calculate_hash()
-
-    # ブロックの各属性の値を返す関数
-    def to_dict(self):
-        return {
-            "index": self.index,
-            "transactions": self.transactions,
-            "previous_hash": self.previous_hash,
-            "timestamp": self.timestamp,
-            "nonce": self.nonce,
-            "hash": self.hash
-        }
-
-    # block_dict関数を用いて新しいBlockオブジェクトを作成して返す関数
-    @staticmethod
-    def from_dict(block_dict):
-        return Block(
-            block_dict["index"],
-            block_dict["transactions"],
-            block_dict["previous_hash"],
-            block_dict["timestamp"],
-            block_dict["nonce"]
-        )
+    # blockを生成する関数
+    def create_block(self):
+        with open ('./data/transaction1.json', 'r') as file:
+            transactionX = json.load(file)
+        # マークルルートの作成
+        hashed = hashlib.sha256(transactionX.encode()).hexdigest()
+        return hashed
 
 # ブロックの連結リストに関するオブジェクトクラス
 class Blockchain:
