@@ -26,7 +26,7 @@ class transaction:
         if True:
             status = "attendance"
         # トランザクションの作成
-        transaction = {
+        NewTX = {
             "name": name,
             "date": date,
             "time": time,
@@ -34,7 +34,7 @@ class transaction:
         }
         # JSONファイルへの書き込み
         with open('./data/transaction.json', 'w') as json_file:
-            json.dump(transaction, json_file, indent=2)
+            json.dump(NewTX, json_file, indent=2)
 
     # トランザクションをブロードキャストする関数
     def broadcast_transaction(self, transaction):
@@ -47,8 +47,9 @@ class transaction:
 # ブロック単体に関するオブジェクトクラス
 class Block:
     # blockクラスの初期化関数
-    def __init__(self, transactionX):
+    def __init__(self, transactionX, hashed):
         self.transactionX=transactionX
+        self.hashed=hashed
 
     # blockを生成する関数
     def create_block(self):
@@ -57,6 +58,10 @@ class Block:
         # マークルルートの作成
         hashed = hashlib.sha256(transactionX.encode()).hexdigest()
         return hashed
+
+    def bloadcast_block(self):
+        #ソケット通信
+        print("tmp")
 
 # ブロックの連結リストに関するオブジェクトクラス
 class Blockchain:
