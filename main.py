@@ -1,6 +1,5 @@
 import hashlib
 import json
-from datetime import datetime
 from time import time
 from uuid import uuid4
 
@@ -11,26 +10,17 @@ class transaction:
         self.pending_transactions = []
 
     # トランザクションを生成する関数
-    def create_transaction(self, name, date, time, status):
-        
-        # データの収得
-        name = "Yuki Kato"
-        # 時間の取得
-        datetime = datetime.now()
-        date = int(f"{datetime.year:04d}{datetime.month:02d}{datetime.day:02d}")
-        time = int(f"{datetime.hour:04d}{datetime.minute:02d}{datetime.second:02d}")
-        # 出席記録の取得
-        if True:
-            status = "attendance"
+    def create_transaction(self, sender, recipient, amount):
         # トランザクションの作成
         transaction = {
-            "name": name,
-            "date": date,
-            "time": time,
-            "status": status
+            "name": "Yuki Kato",
+            "date": "0111",
+            "time": "0931",
+            "status": "attendance"
         }
+
         # JSONファイルへの書き込み
-        with open('./transaction/transaction.json', 'w') as json_file:
+        with open('transaction.json', 'w') as json_file:
             json.dump(transaction, json_file, indent=2)
 
     # トランザクションをブロードキャストする関数
