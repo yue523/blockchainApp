@@ -84,7 +84,7 @@ with open('transaction.json', 'w') as json_file:
 
 ### 1.2. broadcast_transaction
 
-
+aaa
 
 ```py
 # トランザクションをブロードキャストする関数
