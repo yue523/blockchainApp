@@ -3,6 +3,30 @@ import json
 from time import time
 from uuid import uuid4
 
+# トランザクションに関する関数
+class transaction:
+    # blockchainの初期化関数
+    def __init__(self):
+        self.pending_transactions = []
+
+    # トランザクションを生成する関数
+    def create_transaction(self, sender, recipient, amount):
+        # トランザクションの作成
+        transaction = {
+            "name": "Yuki Kato",
+            "date": "0111",
+            "time": "0931",
+            "status": "attendance"
+        }
+
+        # JSONファイルへの書き込み
+        with open('transaction.json', 'w') as json_file:
+            json.dump(transaction, json_file, indent=2)
+
+    # トランザクションをブロードキャストする関数
+    def broadcast_transaction(self, transaction):
+        self.pending_transactions.append(transaction)
+
 # ブロック単体に関するオブジェクトクラス
 class Block:
     # blockクラスの初期化関数
@@ -97,25 +121,6 @@ class Blockchain:
                 return False
         return True
 
-# トランザクションに関する関数
-class transaction:
-    # blockchainの初期化関数
-    def __init__(self):
-        self.pending_transactions = []
-
-    # トランザクションを生成する関数
-    def create_transaction(self, sender, recipient, amount):
-        transaction = {
-            "from": sender,
-            "to": recipient,
-            "amount": amount
-        }
-        self.pending_transactions.append(transaction)
-        return transaction
-
-    # トランザクションをブロードキャストする関数
-    def broadcast_transaction(self, transaction):
-        self.pending_transactions.append(transaction)
 
 # Example usage:
 # Initialize blockchain
