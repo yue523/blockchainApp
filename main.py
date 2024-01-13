@@ -3,6 +3,7 @@ import json
 from datetime import datetime
 from time import time
 from uuid import uuid4
+import socket
 
 # トランザクションに関する関数
 class transaction:
@@ -106,23 +107,68 @@ class Blockchain:
                 return False
         return True
 
+# jsonファイルを送信する関数
+def send_json():
+    # このノードのホストとポートを指定
+    HOST = '192.168.3.105'
+    PORT = 50000
 
-# Example usage:
-# Initialize blockchain
-my_blockchain = Blockchain()
+    # サーバーソケットを作成
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.bind((HOST, PORT))
+    server_socket.listen()
 
-# Create transactions
-transaction1 = my_blockchain.create_transaction("sender1", "recipient1", 2.0)
-transaction2 = my_blockchain.create_transaction("sender2", "recipient2", 3.0)
+    print(f"Server listening on {HOST}:{PORT}")
 
-# Broadcast transactions
-my_blockchain.broadcast_transaction(transaction1, "sender1_signature")
-my_blockchain.broadcast_transaction(transaction2, "sender2_signature")
+    # クライアントからの接続を待機
+    client_socket, client_address = server_socket.accept()
+    print(f"Connection from {client_address}")
 
-# Mine pending transactions
-miner_address = str(uuid4())  # Generate a random miner address for simplicity
-my_blockchain.mine_pending_transactions(miner_address)
+    # 送信するJSONファイルのパス
+    json_file_path = 'path/to/your/file.json'
 
-# Print blockchain
-for block in my_blockchain.chain:
-    print(block.to_dict())
+    # JSONファイルを読み込み
+    with open(json_file_path, 'r') as file:
+        json_data = file.read()
+
+    # JSONデータをクライアントに送信
+    client_socket.sendall(json_data.encode('utf-8'))
+    print("JSON data sent successfully")
+
+    # ソケットを閉じる
+    client_socket.close()
+    server_socket.close()
+
+# jsonファイルを受信する関数
+def recive_json():
+    # サーバーのホストとポートを指定
+    HOST = '192.168.3.105'
+    PORT = 50000
+
+    # クライアントソケットを作成
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client_socket.connect((HOST, PORT))
+
+    # 受信したJSONデータを保存するファイルのパス
+    received_json_path = 'path/to/save/received_data.json'
+
+    # サーバーからJSONデータを受信
+    received_data = client_socket.recv(4096).decode('utf-8')
+
+    # 受信したJSONデータを保存
+    with open(received_json_path, 'w') as file:
+        file.write(received_data)
+
+    print(f"JSON data received and saved to {received_json_path}")
+
+    # ソケットを閉じる
+    client_socket.close()
+
+# main関数
+if __name__ == "__main__":
+    # サーバーとクライアントを同時に起動
+    server_thread = threading.Thread(target=start_server)
+    client_thread = threading.Thread(target=start_client)
+
+    server_thread.start()
+    client_thread.start()
