@@ -1,6 +1,6 @@
+from datetime import datetime
 import hashlib
 import json
-from datetime import datetime
 import socket
 
 ####################
@@ -17,17 +17,15 @@ class transaction:
     def createTX(self):
         # 名前の収得
         myname=self.name
-        # 時間の取得
-        datetime = datetime.now()
-        date = int(f"{datetime.year:04d}{datetime.month:02d}{datetime.day:02d}")
-        time = int(f"{datetime.hour:04d}{datetime.minute:02d}{datetime.second:02d}")
+        # タイムスタンプの作成
+        now = datetime.now()
+        timestamp =int(now.timestamp())
         # 出席記録の取得
         status = "attendance"
         # トランザクションの作成
         NewTX = {
             "name": myname,
-            "date": date,
-            "time": time,
+            "timestamp": timestamp,
             "status": status
         }
         # JSONファイルへの書き込み
@@ -43,24 +41,33 @@ class transaction:
 # ブロッククラス
 ####################
 class Block:
-    # blockクラスの初期化関数
-    def __init__(self, transactionX, hashed):
-        self.transactionX=transactionX
-        self.hashed=hashed
-
+    
     # blockを生成する関数
-    def create_block(self):
+    def createBL(self):
+        # trasactionのjsonファイルの読み込みマークルルートを作成
         with open ('./data/transaction1.json', 'r') as file:
             transactionX = json.load(file)
-        # マークルルートの作成
-        hashed = hashlib.sha256(transactionX.encode()).hexdigest()
-        return hashed
+        markle = hashlib.sha256(transactionX.encode()).hexdigest()        
+        # タイムスタンプの作成
+        now = datetime.now()
+        timestamp = int(now.timestamp())
+        # ブロックチェーン最後のハッシュの取得
+        prevHash = ""
+        # ブロックの作成
+        newBL = {
+            "prevHash": prevHash,
+            "hash": markle,
+            "timestamp": timestamp,
+            "nonce": ""
+        }
+        # JSONファイルへの書き込み
+        with open('./block.json', 'w') as json_file:
+            json.dump(newBL, json_file, indent=2)
 
-    def bloadcast_block(self):
-        ############################
-        #ソケット通信によってブロードキャスト
-        ############################
-        print("tmp")
+    # トランザクションをブロードキャストする関数
+    def broadcastBL(self, client, port):
+        print(f"{client}をブロードキャストします。")
+        sock.sendto("jsonファイル", (client, port))
 
 ####################
 # ブロックチェーンクラス
@@ -135,7 +142,7 @@ if __name__ == "__main__":
         # データの受取
         data, cli_addr=sock.recvfrom("jsonファイル",)
         print(f"{cli_addr}から{data}トランザクションを受信しました。")
-        
+
         #######
         # データをトランザクション、ブロック、ブロックチェーンに仕分けする
         #######
