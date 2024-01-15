@@ -1,8 +1,6 @@
 import hashlib
 import json
 from datetime import datetime
-from time import time
-from uuid import uuid4
 import socket
 
 # トランザクションに関する関数
@@ -107,68 +105,17 @@ class Blockchain:
                 return False
         return True
 
-# jsonファイルを送信する関数
-def send_json():
+# ソケット通信するための初期関数
+def socket_init():
     # このノードのホストとポートを指定
     HOST = '192.168.3.105'
     PORT = 50000
 
-    # サーバーソケットを作成
-    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_socket.bind((HOST, PORT))
-    server_socket.listen()
-
-    print(f"Server listening on {HOST}:{PORT}")
-
-    # クライアントからの接続を待機
-    client_socket, client_address = server_socket.accept()
-    print(f"Connection from {client_address}")
-
-    # 送信するJSONファイルのパス
-    json_file_path = 'path/to/your/file.json'
-
-    # JSONファイルを読み込み
-    with open(json_file_path, 'r') as file:
-        json_data = file.read()
-
-    # JSONデータをクライアントに送信
-    client_socket.sendall(json_data.encode('utf-8'))
-    print("JSON data sent successfully")
-
-    # ソケットを閉じる
-    client_socket.close()
-    server_socket.close()
-
-# jsonファイルを受信する関数
-def recive_json():
-    # サーバーのホストとポートを指定
-    HOST = '192.168.3.105'
-    PORT = 50000
-
-    # クライアントソケットを作成
-    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client_socket.connect((HOST, PORT))
-
-    # 受信したJSONデータを保存するファイルのパス
-    received_json_path = 'path/to/save/received_data.json'
-
-    # サーバーからJSONデータを受信
-    received_data = client_socket.recv(4096).decode('utf-8')
-
-    # 受信したJSONデータを保存
-    with open(received_json_path, 'w') as file:
-        file.write(received_data)
-
-    print(f"JSON data received and saved to {received_json_path}")
-
-    # ソケットを閉じる
-    client_socket.close()
+    # ソケットの作成とバインド
+    sock =socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.bind((HOST,PORT))
 
 # main関数
 if __name__ == "__main__":
-    # サーバーとクライアントを同時に起動
-    server_thread = threading.Thread(target=start_server)
-    client_thread = threading.Thread(target=start_client)
-
-    server_thread.start()
-    client_thread.start()
+    # ソケット通信の初期設定する関数を実行
+    socket_init()
