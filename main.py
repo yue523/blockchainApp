@@ -3,30 +3,29 @@ import json
 from datetime import datetime
 import socket
 
-# トランザクションに関する関数
+####################
+# トランザクションクラス
+####################
 class transaction:
     # blockchainの初期化関数
-    def __init__(self, name, date, time, status):
-        self.pending_transactions = []
+    def __init__(self, name, client,port):
         self.name= name
-        self.date=date
-        self.time=time
-        self.status=status
+        self.client=client
+        self.port=port
 
     # トランザクションを生成する関数
-    def create_transaction(self):
-        # データの収得
-        name = "Yuki Kato"
+    def createTX(self):
+        # 名前の収得
+        myname=self.name
         # 時間の取得
         datetime = datetime.now()
         date = int(f"{datetime.year:04d}{datetime.month:02d}{datetime.day:02d}")
         time = int(f"{datetime.hour:04d}{datetime.minute:02d}{datetime.second:02d}")
         # 出席記録の取得
-        if True:
-            status = "attendance"
+        status = "attendance"
         # トランザクションの作成
         NewTX = {
-            "name": name,
+            "name": myname,
             "date": date,
             "time": time,
             "status": status
@@ -36,14 +35,18 @@ class transaction:
             json.dump(NewTX, json_file, indent=2)
 
     # トランザクションをブロードキャストする関数
-    def broadcast_transaction(self, transaction):
-        #########################
-        # ソケット通信でのブロードキャスト
-        # コードはまだ書いていない
-        #########################
-        self.pending_transactions.append(transaction)
+    def broadcastTX(self, client, port):
+        print(f"{client}をブロードキャストします。")
+        sock.sendto("jsonファイル", (client, port))
 
-# ブロック単体に関するオブジェクトクラス
+    # トランザクションを他ノードから受信する関数
+    def receiveTX(self):
+        recvTX, cli_addr=sock.recvfrom("jsonファイル",)
+        print(f"{cli_addr}から{recvTX}トランザクションを受信しました。")
+
+####################
+# ブロッククラス
+####################
 class Block:
     # blockクラスの初期化関数
     def __init__(self, transactionX, hashed):
@@ -64,7 +67,9 @@ class Block:
         ############################
         print("tmp")
 
-# ブロックの連結リストに関するオブジェクトクラス
+####################
+# ブロックチェーンクラス
+####################
 class Blockchain:
     # blockchainの初期化関数
     def __init__(self, difficulty=2):
@@ -105,17 +110,24 @@ class Blockchain:
                 return False
         return True
 
-# ソケット通信するための初期関数
-def socket_init():
-    # このノードのホストとポートを指定
+####################
+# main関数
+####################
+if __name__ == "__main__":
+    # ホスト(本ノード)とクライアントのIPアドレス、ポートを設定
     HOST = '192.168.3.105'
+    CLIENT = '192.168.3.255'
     PORT = 50000
 
     # ソケットの作成とバインド
-    sock =socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.bind((HOST,PORT))
 
-# main関数
-if __name__ == "__main__":
-    # ソケット通信の初期設定する関数を実行
-    socket_init()
+    sampleTX = transaction("name",CLIENT,PORT)
+    sampleTX.createTX()
+    sampleTX.broadcastTX(CLIENT,PORT)
+
+    # 常時実行プログラム
+    while True:
+        # トランザクションの受取
+        sampleTX.receiveTX()
