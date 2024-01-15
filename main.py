@@ -39,11 +39,6 @@ class transaction:
         print(f"{client}をブロードキャストします。")
         sock.sendto("jsonファイル", (client, port))
 
-    # トランザクションを他ノードから受信する関数
-    def receiveTX(self):
-        recvTX, cli_addr=sock.recvfrom("jsonファイル",)
-        print(f"{cli_addr}から{recvTX}トランザクションを受信しました。")
-
 ####################
 # ブロッククラス
 ####################
@@ -127,7 +122,25 @@ if __name__ == "__main__":
     sampleTX.createTX()
     sampleTX.broadcastTX(CLIENT,PORT)
 
+    ########
+    # ブロックに関するプログラム
+    ########
+
+    ########
+    # ブロックチェーンに関するプログラム
+    ########
+
     # 常時実行プログラム
     while True:
-        # トランザクションの受取
-        sampleTX.receiveTX()
+        # データの受取
+        data, cli_addr=sock.recvfrom("jsonファイル",)
+        print(f"{cli_addr}から{data}トランザクションを受信しました。")
+        
+        #######
+        # データをトランザクション、ブロック、ブロックチェーンに仕分けする
+        #######
+
+        #######
+        # 仕分けしたデータをディレクトリに書き込む
+        #######
+
