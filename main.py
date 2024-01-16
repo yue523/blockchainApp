@@ -31,7 +31,7 @@ class transaction:
             "status": status
         }
         # JSONファイルへの書き込み
-        json_path = './data/' + str(uuid.uuid4()) + '.json'
+        json_path = './data/transaction/' + str(uuid.uuid4()) + '.json'
         with open(json_path, 'w') as json_path:
             json.dump(newTX, json_path, indent=2)
         
