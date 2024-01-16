@@ -2,40 +2,39 @@ from datetime import datetime
 import hashlib
 import json
 import socket
+import random
+import uuid
 
 ####################
 # トランザクションクラス
 ####################
 class transaction:
     # blockchainの初期化関数
-    def __init__(self, name, client,port):
-        self.name= name
-        self.client=client
-        self.port=port
+    def __init__(self, name):
+        self.name = name
 
     # トランザクションを生成する関数
     def createTX(self):
         # 名前の収得
-        myname=self.name
+        myName = self.name
         # タイムスタンプの作成
         now = datetime.now()
-        timestamp =int(now.timestamp())
+        timestamp = int(now.timestamp())
         # 出席記録の取得
         status = "attendance"
         # トランザクションの作成
         NewTX = {
-            "name": myname,
+            "name": myName,
             "timestamp": timestamp,
             "status": status
         }
         # JSONファイルへの書き込み
-        with open('./data/transaction.json', 'w') as json_file:
-            json.dump(NewTX, json_file, indent=2)
-
-    # トランザクションをブロードキャストする関数
-    def broadcastTX(self, client, port):
-        print(f"{client}をブロードキャストします。")
-        sock.sendto("jsonファイル", (client, port))
+        json_path = './data/' + str(uuid.uuid4()) + '.json'
+        with open(json_path, 'w') as json_path:
+            json.dump(NewTX, json_path, indent=2)
+        
+        # 作成したjsonファイルを返す
+        return NewTX
 
 ####################
 # ブロッククラス
@@ -53,12 +52,14 @@ class Block:
         timestamp = int(now.timestamp())
         # ブロックチェーン最後のハッシュの取得
         prevHash = ""
+        # ノンス値の作成
+        nonce = random.randomint(1, 1000000)
         # ブロックの作成
         newBL = {
             "prevHash": prevHash,
             "hash": markle,
             "timestamp": timestamp,
-            "nonce": ""
+            "nonce": nonce
         }
         # JSONファイルへの書き込み
         with open('block.json', 'w') as json_file:
@@ -67,7 +68,7 @@ class Block:
     # トランザクションをブロードキャストする関数
     def broadcastBL(self, client, port):
         print(f"{client}をブロードキャストします。")
-        sock.sendto("jsonファイル", (client, port))
+
 
 ####################
 # ブロックチェーンクラス
@@ -97,6 +98,10 @@ class Blockchain:
 # main関数
 ####################
 if __name__ == "__main__":
+
+    # 名前の入力
+    name = input("名前を入力してください．->")
+
     # ホスト(本ノード)とクライアントのIPアドレス、ポートを設定
     HOST = '192.168.3.105'
     CLIENT = '192.168.3.255'
@@ -106,9 +111,10 @@ if __name__ == "__main__":
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.bind((HOST,PORT))
 
-    sampleTX = transaction("name",CLIENT,PORT)
-    sampleTX.createTX()
-    sampleTX.broadcastTX(CLIENT,PORT)
+    # 出席トランザクションの作成とブロードキャスト
+    sampleTX = transaction(name)
+    newTX = sampleTX.createTX()
+    sock.sendto(newTX, (CLIENT, PORT))
 
     ########
     # ブロックに関するプログラム
