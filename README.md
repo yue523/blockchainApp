@@ -6,7 +6,30 @@
 
 main.pyはブロックチェーンネットワークの出席、退席を管理するプログラムである。詳しくは[python.md](./python.md)に記載しておく。
 
-### 2. block.json
+### 2. (transaction).json
+
+(transaction).jsonはネットワークに参加しているノードが出席または退席したときに生成されるjsonファイルである。
+ファイル名はpythonファイルのuuidモジュールによってランダムに生成される。
+(transaction).jsonはdataファイル内に保管される。
+すなわちdataファイルはトランザクションプールとして利用される。
+トランザクションファイルのサンプルを示す。
+
+```json
+{
+  "name": "Yuki Kato",
+  "timestamp": 1705367930,
+  "status": "attendance"
+}
+```
+
+| キー         | 説明                   |
+|-------------|-----------------------|
+| name   | 出席者の名前    |
+| timestamp   | トランザクションが作成された時刻    |
+| status   | 出席者の状態    |
+
+
+### 3. block.json
 
 block.jsonはブロックチェーンの部分を担うファイルであり以下の構造体から成り立つ。
 
@@ -47,7 +70,7 @@ block.jsonはブロックチェーンの部分を担うファイルであり以�
 
 blockchain.jsonはブロックは基本的に最初のブロックから記載する。
 
-### 3. absence.csv
+### 4. absence.csv
 
 absence.csvは出席者の出席状況が確認できるファイルである。
 
@@ -61,21 +84,4 @@ Takagi,欠席,欠席,欠席,欠席,出席
 
 absence.csvはトランザクションからブロックが生成されてそれがブロックチェーンとして承認された時に、出席表が更新される。
 
-### 4. transactionX.json
 
-transactionX.jsonはネットワークに参加しているノードが出席または退席したときに生成されるjsonファイルである。transactionX.jsonのXの部分には数字が入っていき、transaction1.json、transaction2.json、transaction3.jsonのように増えていく。
-
-```json
-{
-  "absence": [
-    {
-      "name": "Yuki Kato",
-      "date": 0111,
-      "time": 0931,
-      "status": "attendance"
-    },
-  ]
-}
-```
-
-なお、transactionX.jsonには出席状況が更新されたノードのみ記載する。また、上に記載のdateの値0111は1/11を示して、timeの値0931は9:31を示す。

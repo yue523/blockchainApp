@@ -4,6 +4,8 @@ import json
 import socket
 import random
 import uuid
+import os
+import glob
 
 ####################
 # トランザクションクラス
@@ -23,7 +25,7 @@ class transaction:
         # 出席記録の取得
         status = "attendance"
         # トランザクションの作成
-        NewTX = {
+        newTX = {
             "name": myName,
             "timestamp": timestamp,
             "status": status
@@ -31,10 +33,10 @@ class transaction:
         # JSONファイルへの書き込み
         json_path = './data/' + str(uuid.uuid4()) + '.json'
         with open(json_path, 'w') as json_path:
-            json.dump(NewTX, json_path, indent=2)
+            json.dump(newTX, json_path, indent=2)
         
         # 作成したjsonファイルを返す
-        return NewTX
+        return newTX
 
 ####################
 # ブロッククラス
@@ -100,7 +102,7 @@ class Blockchain:
 if __name__ == "__main__":
 
     # 名前の入力
-    name = input("名前を入力してください．->")
+    myName = input("名前を入力してください．->")
 
     # ホスト(本ノード)とクライアントのIPアドレス、ポートを設定
     HOST = '192.168.3.105'
@@ -112,7 +114,7 @@ if __name__ == "__main__":
     sock.bind((HOST,PORT))
 
     # 出席トランザクションの作成とブロードキャスト
-    sampleTX = transaction(name)
+    sampleTX = transaction(myName)
     newTX = sampleTX.createTX()
     sock.sendto(newTX, (CLIENT, PORT))
 
@@ -127,14 +129,20 @@ if __name__ == "__main__":
     # 常時実行プログラム
     while True:
         # データの受取
-        data, cli_addr=sock.recvfrom("jsonファイル",)
-        print(f"{cli_addr}から{data}トランザクションを受信しました。")
+        data, address = sock.recvfrom(4096)
+        print(f"{address}から{data}トランザクションを受信しました。")
 
         #######
         # データをトランザクション、ブロック、ブロックチェーンに仕分けする
-        #######
-
-        #######
         # 仕分けしたデータをディレクトリに書き込む
         #######
 
+        # dataファイル内に8つ以上のファイルがあった場合、
+        # blockクラスを呼び出してcreateBLを行う.
+        # 指定されたディレクトリ内のJSONファイルを検索
+        TXfiles = glob.glob(os.path.join("./data", '*.json'))
+        TXcount = len(TXfiles)
+
+        if TXcount >= 8:
+            newBL = Block()
+            newBL.createBL()
