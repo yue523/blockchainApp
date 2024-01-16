@@ -1,3 +1,6 @@
+'''
+編集中
+'''
 import hashlib
 import os
 import json
@@ -56,10 +59,23 @@ if __name__ == "__main__":
             hash_value = hashlib.sha256(content.encode()).hexdigest()
             hash_array.append((key, hash_value))
 
+    # マークルルートの作成
+    temp = []
+    for i in range(0, len(hash_array)-1, 2):
+        combined_hash = hash_array[i] + hash_array[i+1]
+        hash_object = hashlib.sha256(combined_hash.encode())
+        temp.append(hash_object.hexdigest())
 
+    # If the number of hashes is odd, duplicate the last one
+    if len(hash_array) % 2 == 1:
+        temp.append(hash_array[-1])
+
+    hash_array = temp
+
+    print(hash_array[0])
     # ハッシュ値を出力
-    for file_key, hash_value in hash_array:
-        print(f"File: {file_key}, Hash: {hash_value}")
+    # for file_key, hash_value in hash_array:
+        # print(f"File: {file_key}, Hash: {hash_value}")
 
 
     # # 結果を表示
