@@ -1,95 +1,46 @@
-# 補足
+# `main.py`の説明
 
-## main.pyの説明
+本ファイルでは`main.py`のコードについて説明する。リンクは[こちら](./main.py)から確認できる。
 
-本ファイルではmain.pyのコードについて説明する。
-
-## 1. transactionクラス
+## 1. `transaction`クラス
 
 ```py
-# トランザクションに関する関数
 class transaction:
     # blockchainの初期化関数
-    def __init__(self):
-        self.pending_transactions = []
+    def __init__(self, name):
+        self.name = name
 
     # トランザクションを生成する関数
-    def create_transaction(self, name, date, time, status):
-        
-        # データの収得
-        name = "Yuki Kato"
-        # 時間の取得
-        datetime = datetime.now()
-        date = int(f"{datetime.year:04d}{datetime.month:02d}{datetime.day:02d}")
-        time = int(f"{datetime.hour:04d}{datetime.minute:02d}{datetime.second:02d}")
+    def createTX(self):
+        # 名前の収得
+        myName = self.name
+        # タイムスタンプの作成
+        now = datetime.now()
+        timestamp = int(now.timestamp())
         # 出席記録の取得
-        if True:
-            status = "attendance"
-
+        status = "attendance"
         # トランザクションの作成
-        transaction = {
-            "name": name,
-            "date": date,
-            "time": time,
+        newTX = {
+            "name": myName,
+            "timestamp": timestamp,
             "status": status
         }
-
         # JSONファイルへの書き込み
-        with open('transaction.json', 'w') as json_file:
-            json.dump(transaction, json_file, indent=2)
-
-    # トランザクションをブロードキャストする関数
-    def broadcast_transaction(self, transaction):
-        self.pending_transactions.append(transaction)
+        json_path = './data/' + str(uuid.uuid4()) + '.json'
+        with open(json_path, 'w') as json_path:
+            json.dump(newTX, json_path, indent=2)
+        
+        # 作成したjsonファイルを返す
+        return newTX
 ```
 
 | 関数                    | 内容                        |
 |------------------------|----------------------------|
-| create_transaction     | トランザクションを作成する       |
-| broadcast_transaction  | トランザクションのブロードキャスト |
+| `createTX`             | トランザクションを作成する       |
 
-transactionクラスはtransactionに関するクラスである。
-
-### 1.1. create_transaction
-
-初めに構造体`transaction`を作成する。構造体`transaction`ではそれぞれ`name`、`date`、`time`、`status`を取得する。`date`と`time`は`datetime`モジュールの`now`関数を用いて変数`datetime`を作成して`datetime`変数から取得する。
-
-```py
-# トランザクションを生成する関数
-def create_transaction(self, name, date, time, status):
-    
-    # データの収得
-    name = "Yuki Kato"
-    # 時間の取得
-    datetime = datetime.now()
-    date = int(f"{datetime.year:04d}{datetime.month:02d}{datetime.day:02d}")
-    time = int(f"{datetime.hour:04d}{datetime.minute:02d}{datetime.second:02d}")
-    # 出席記録の取得
-    if True:
-        status = "attendance"
-    # トランザクションの作成
-    transaction = {
-        "name": name,
-        "date": date,
-        "time": time,
-        "status": status
-    }
-```
-
-その後`with`ステートメントを使用してファイルのオープンとコンテキストの管理をする。`open`関数を使用してファイル`transaction.json`を書き込みモード (`w`) で開く。`json.dump`関数を使用して`transaction`をJSONフォーマットに変換し、それを`transaction.json`に書き込む。`indent=2`の引数は各レベルで2つのスペースでインデントするよう指定している。
-
-```py
-# JSONファイルへの書き込み
-with open('transaction.json', 'w') as json_file:
-    json.dump(transaction, json_file, indent=2)
-```
-
-### 1.2. broadcast_transaction
-
-aaa
-
-```py
-# トランザクションをブロードキャストする関数
-def broadcast_transaction(self, transaction):
-    self.pending_transactions.append(transaction)
-```
+`createTX`関数は辞書`newTX`を作成する。
+辞書`newTX`ではそれぞれ`name`、`timestamp`、`status`を取得する。
+`timestamp`は`datetime`モジュールの`timestamp`関数から取得する。
+辞書`newTX`はその後`json`ファイルとして`dump`関数を用いて書き込まれる。
+その際、作成するファイルの名前は`uuid`モジュールを用いて自動的かつランダムに生成される。
+最終的に、関数`createTX`は辞書`newTX`を文字型の変数として返す。
