@@ -15,7 +15,7 @@ class Block:
 
     def calculate_merkle(self):
         # ディレクトリ内のJSONファイルのパスを取得
-        directory_path = "./data/transaction"
+        directory_path = "../data/transaction"
         json_files = [f for f in os.listdir(directory_path) if f.endswith('.json')]
 
         # JSONファイルのパスとtimestampの値を格納するリスト
@@ -49,7 +49,7 @@ class Block:
         merkle_root = hashed_values[0]
 
         # 移動先のディレクトリ
-        destination_directory = "./data/.transaction"
+        destination_directory = "../data/.transaction"
 
         # 最初の8つのファイルを移動
         for file_path, _ in sorted_files[:8]:
@@ -79,7 +79,7 @@ class Block:
             "nonce": nonce
         }
         # JSONファイルへの書き込み
-        block_path = './data/block/' + str(uuid.uuid4()) + '.json'
+        block_path = '../data/block/' + str(uuid.uuid4()) + '.json'
         with open(block_path, 'w') as json_file:
             json.dump(newBL, json_file, indent=2)
 
@@ -90,7 +90,7 @@ if __name__ == "__main__":
     ################
     while True:
         # 指定されたディレクトリ内のJSONファイルを検索
-        TXfiles = glob.glob(os.path.join("./data/transaction", '*.json'))
+        TXfiles = glob.glob(os.path.join("../data/transaction", '*.json'))
         TXcount = len(TXfiles)
 
         # dataファイル内に8つ以上のファイルがあった場合、
