@@ -116,8 +116,6 @@ class Block:
         with open(block_path, 'w') as json_file:
             json.dump(newBL, json_file, indent=2)
 
-
-
 ####################
 # ブロックチェーンクラス
 ####################
@@ -183,12 +181,11 @@ if __name__ == "__main__":
         # 仕分けしたデータをディレクトリに書き込む
         #######
 
-        # dataファイル内に8つ以上のファイルがあった場合、
-        # blockクラスを呼び出してcreateBLを行う.
-        # 指定されたディレクトリ内のJSONファイルを検索
+        ################################
+        # 8つ以上のTXがあった場合、ブロックを作成
+        ################################
         TXfiles = glob.glob(os.path.join("./data", '*.json'))
         TXcount = len(TXfiles)
-
         if TXcount >= 8:
             newBL = Block()
             newBL.createBL()
