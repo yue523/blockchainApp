@@ -43,22 +43,15 @@ class transaction:
 # ブロッククラス
 ####################
 class Block:
-    
-
     def calculate_merkle(self):
-
         directory_path = "./data/transaction"
-
         # ディレクトリ内のJSONファイルのパスを取得
         json_files = [f for f in os.listdir(directory_path) if f.endswith('.json')]
-
         # JSONファイルのパスとtimestampの値を格納するリスト
         files_with_timestamp = []
-
         # ディレクトリ内のJSONファイルからtimestampの値を取得
         for json_file in json_files:
             file_path = os.path.join(directory_path, json_file)
-            
             with open(file_path, 'r') as f:
                 data = json.load(f)
                 timestamp_value = data.get('timestamp')
@@ -67,7 +60,6 @@ class Block:
 
         # timestampの値が小さい順にソート
         sorted_files = sorted(files_with_timestamp, key=lambda x: x[1])
-
         # 最初の8つのファイルの中身を文字列型の配列に格納
         file_contents = []
         for file_path, _ in sorted_files[:8]:
@@ -75,27 +67,22 @@ class Block:
                 content = f.read()
                 file_contents.append(content)
 
-        # ファイルの内容をハッシュ化してリストに追加
-        hashed_values = [hashlib.sha256(data.encode('utf-8')).hexdigest() for data in file_contents]
-
         # マークルルートを計算
+        hashed_values = [hashlib.sha256(data.encode('utf-8')).hexdigest() for data in file_contents]
         while len(hashed_values) > 1:
             temp = []
             for i in range(0, len(hashed_values), 2):
                 # 2つのハッシュを連結してハッシュ化
                 combined_hash = hashlib.sha256((hashed_values[i] + hashed_values[i + 1]).encode('utf-8')).hexdigest()
                 temp.append(combined_hash)
-
             # 新しいハッシュリストを使用してループを続行
             hashed_values = temp
-        # マークルルートが得られます
         merkle_root = hashed_values[0]
         return merkle_root
 
     def createBL(self): 
         # マークルルートの作成
         merkle = self.calculate_merkle()
-
         # タイムスタンプの作成
         now = datetime.now()
         timestamp = int(now.timestamp())
@@ -125,8 +112,7 @@ class Blockchain:
     def getNewBL(self, Blockfolder):
         # フォルダ内のJSONファイルの一覧を取得
         json_files = [f for f in os.listdir(Blockfolder) if f.endswith('.json')]
-
-        min_timestamp = float('inf')  # 初期値を無限大に設定
+        min_timestamp = 0
         min_timestamp_file_path = None
 
         for json_file in json_files:
@@ -160,7 +146,6 @@ class Blockchain:
             'block': newBC_json
         }
         BCjson.append(newBL)
-
         # JSONファイルの読み込み
         with open(BCpath, 'r') as file:
             # ファイルを書き込みモードで開いてJSONデータを書き込む
@@ -177,7 +162,7 @@ class Blockchain:
 if __name__ == "__main__":
 
     #####################
-    # 初期設定
+    # 出席システムの初期設定
     #####################
     # 名前の入力
     myName = input("名前を入力してください．->")
@@ -200,7 +185,6 @@ if __name__ == "__main__":
     BCpath = './data/blockchain/blockchain.json'
     with open(BCpath, 'r') as json_file:
         BCjson = json.load(json_file)
-    
     # フォルダ内のファイルを取得
     BLFpath = './data/block'
 
@@ -232,5 +216,3 @@ if __name__ == "__main__":
         ################################
         data, address = sock.recvfrom(4096)
         print(f"{address}から{data}トランザクションを受信しました。")
-
-
