@@ -1,28 +1,22 @@
-# import socket
+import socket
 import json
 
-def process_data(data):
-    data_dict = json.loads(data)
+# ソケットの作成
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-    if 'status' in data_dict:
-        print('これはTX')
-    elif 'hash' in data_dict:
-        print('これはBL')
-    elif 'index' in data_dict:
-        print('これはBC')
-    else:
-        print('不明なデータ')
+# ホストとポートの設定
+host = 'localhost'
+port = 12345
+server_address = (host, port)
 
-
-# 仮のソケット通信の例
-# 実際の使用に合わせて変更してください
-# server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-# server_socket.bind(('localhost', 12345))
+# ソケットを指定したホスト・ポートにバインド
+sock.bind(server_address)
 
 while True:
-    # data, address = server_socket.recvfrom(1024)
-    data = {
-        "index":3,
-        "timpstamp":"hogehoge"
-        }
-    process_data(data.decode('utf-8'))
+    recieved, CLIaddress = sock.recvfrom(4096)
+
+    # 受け取ったデータを辞書にデシリアライズ
+    recieved_json = json.loads(recieved)
+
+    # 辞書を出力
+    print("Received dictionary:", recieved_json)
