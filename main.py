@@ -11,10 +11,14 @@ import glob
 ####################
 # トランザクションクラス
 ####################
-class transaction:
+class Transaction:
     # blockchainの初期化関数
     def __init__(self, name):
+        print("トランザクションが発行、または受信しました。\n")
         self.name = name
+
+    def recvTX(self):
+        print("トランザクションを受信しました。\n")
 
     # トランザクションを生成する関数
     def createTX(self):
@@ -43,6 +47,12 @@ class transaction:
 # ブロッククラス
 ####################
 class Block:
+    def __init__(self):
+        print("ブロックが生成、または受信されました。\n")
+    
+    def recvBL(self):
+        print("ブロックを受信しました。\n")
+    
     def calculate_merkle(self):
         directory_path = "./data/transaction"
         # ディレクトリ内のJSONファイルのパスを取得
@@ -108,8 +118,14 @@ class Block:
 # ブロックチェーンクラス
 ####################
 class Blockchain:
+    def __init__(self):
+        print("ブロックチェーンが更新されます。\n")
+        
+    def recvBC(self):
+        print("ブロックチェーンを受信しました。\n")
+
     # ブロックプール内から一番小さいタイムスタンプのブロックを取得
-    def getNewBL(self, Blockfolder):
+    def setNewBL(self, Blockfolder):
         # フォルダ内のJSONファイルの一覧を取得
         json_files = [f for f in os.listdir(Blockfolder) if f.endswith('.json')]
         min_timestamp = 0
@@ -131,7 +147,7 @@ class Blockchain:
     # ブロックチェーンにブロックを追加する関数
     def addtoBC(self, BCjson, BLFpath):
         # タイムスタンプが小さいブロックを取得
-        BLpath = self.getNewBL(BLFpath)
+        BLpath = self.setNewBL(BLFpath)
         # 新しいブロックのindexの作成
         with open(BCpath, 'r') as file:
             BCjson = json.load(file)
@@ -174,7 +190,7 @@ if __name__ == "__main__":
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.bind((HOST,PORT))
     # 出席トランザクションの作成とブロードキャスト
-    sampleTX = transaction(myName)
+    sampleTX = Transaction(myName)
     newTX = sampleTX.createTX()
     sock.sendto(newTX, (CLIENT, PORT))
 
@@ -214,5 +230,16 @@ if __name__ == "__main__":
         ################################
         # データをTX、BL、BCに仕分けして保存する
         ################################
+        # ソケットを受け取り辞書にでコード
         recv_data, address = sock.recvfrom(4096)
-        
+        recv_json = json.loads(recv_data)
+        # それぞれに存在するキーで仕分けしてそれぞれの処理を行う
+        if 'status' in recv_json:
+            recvTX = Transaction("")
+            recvTX.recvTX()
+        elif 'hash' in recv_json:
+            recvBL = Block()
+            recvBL.recvBL()
+        elif 'index' in recv_json:
+            recvBC = Blockchain()
+            recvBC.recvBC()
