@@ -3,10 +3,10 @@ import hashlib
 import json
 import socket
 import shutil
-import random
 import uuid
 import os
 import glob
+# import random
 
 ####################
 # トランザクションクラス
@@ -14,17 +14,20 @@ import glob
 class Transaction:
     # blockchainの初期化関数
     def __init__(self):
-        print("トランザクションが発行、または受信しました。\n")
+        print("トランザクションが発行、または受信しました。")
 
+    # 受け取ったトランザクションの処理
     def recvTX(self):
-        print("トランザクションを受信しました。\n")
+        print("トランザクションを受信しました。")
+        # 受け取ったトランザクションが`./data/.transaciton`にあるか
+        # トランザクションがあったら処理を終了
+        # 受け取ったトランザクションがなかったら`./data/transaction`に保存
 
     # トランザクションを生成する関数
     def createTX(self):
-        # info.jsonファイルを読み込む
+        # 出席者の名前の作成
         with open('info.json', 'r') as file:
             info_json = json.load(file)
-        # 変数にデータを格納
         myName = info_json["name"]
         # タイムスタンプの作成
         now = datetime.now()
