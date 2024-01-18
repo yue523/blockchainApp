@@ -214,5 +214,5 @@ if __name__ == "__main__":
         ################################
         # データをTX、BL、BCに仕分けして保存する
         ################################
-        data, address = sock.recvfrom(4096)
-        # print(f"{address}から{data}トランザクションを受信しました。")
+        recv_data, address = sock.recvfrom(4096)
+        
