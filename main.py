@@ -13,17 +13,19 @@ import glob
 ####################
 class Transaction:
     # blockchainの初期化関数
-    def __init__(self, name):
+    def __init__(self):
         print("トランザクションが発行、または受信しました。\n")
-        self.name = name
 
     def recvTX(self):
         print("トランザクションを受信しました。\n")
 
     # トランザクションを生成する関数
     def createTX(self):
-        # 名前の収得
-        myName = self.name
+        # info.jsonファイルを読み込む
+        with open('info.json', 'r') as file:
+            info_json = json.load(file)
+        # 変数にデータを格納
+        myName = info_json["name"]
         # タイムスタンプの作成
         now = datetime.now()
         timestamp = int(now.timestamp())
@@ -180,17 +182,19 @@ if __name__ == "__main__":
     #####################
     # 出席システムの初期設定
     #####################
-    # 名前の入力
-    myName = input("名前を入力してください．->")
-    # ホスト(本ノード)とクライアントのIPアドレス、ポートを設定
-    HOST = '192.168.3.105'
-    CLIENT = '192.168.3.255'
-    PORT = 50000
+    # info.jsonファイルを読み込む
+    with open('info.json', 'r') as file:
+        info_json = json.load(file)
+    # 変数にデータを格納
+    myName = info_json["name"]
+    HOST = info_json["HOST"]
+    CLIENT = info_json["CLIENT"]
+    PORT = info_json["PORT"]
     # ソケットの作成とバインド
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.bind((HOST,PORT))
     # 出席トランザクションの作成とブロードキャスト
-    sampleTX = Transaction(myName)
+    sampleTX = Transaction()
     newTX = sampleTX.createTX()
     sock.sendto(newTX, (CLIENT, PORT))
 
@@ -235,7 +239,7 @@ if __name__ == "__main__":
         recv_json = json.loads(recv_data)
         # それぞれに存在するキーで仕分けしてそれぞれの処理を行う
         if 'status' in recv_json:
-            recvTX = Transaction("")
+            recvTX = Transaction()
             recvTX.recvTX()
         elif 'hash' in recv_json:
             recvBL = Block()
