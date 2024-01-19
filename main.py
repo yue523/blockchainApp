@@ -222,26 +222,25 @@ class Blockchain:
 ####################
 if __name__ == "__main__":
 
-    # 出席システムの初期設定
     ###########################################
+    # 出席システムの初期設定
     # info.jsonファイルを読み込む
     with open('info.json', 'r') as file:
         info_json = json.load(file)
     # 変数にデータを格納
     myName = info_json["name"]
     mainBC = info_json["mainBC"]
-    HOST = info_json["HOST"]
-    CLIENT = info_json["CLIENT"]
-    PORT = info_json["PORT"]
+    Host = info_json["HOST"]
+    Client = info_json["CLIENT"]
+    Port = info_json["PORT"]
     # ソケットの作成とバインド
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.bind((HOST,PORT))
+    sock.bind((Host,Port))
     # 出席トランザクションの作成とブロードキャスト
     myTX = Transaction()
     newTX = myTX.createTX(myName, True)
-    sock.sendto(newTX, (CLIENT, PORT))
+    sock.sendto(newTX, (Client, Port))
 
-    # ブロックチェーンに関するプログラム
     ##########################################
     # ブロックチェーンの読み込み
     BCpath = './data/blockchain/' + mainBC + '.json'
@@ -250,8 +249,8 @@ if __name__ == "__main__":
     # フォルダ内のファイルを取得
     BLFpath = './data/block'
 
-    # 常時実行プログラム
     #########################################
+    # 常時実行プログラム
     while True:
 
         # transactionフォルダ内のtransactionの個数を確認
@@ -294,6 +293,6 @@ if __name__ == "__main__":
     
     # 退席のTXを作成して終了
     newTX = myTX.createTX(myName, False)
-    sock.sendto(newTX, (CLIENT, PORT))
+    sock.sendto(newTX, (Client, Port))
     sock.close()
     print("退席用のトランザクションを発行しました。\nプログラムを終了します。")
