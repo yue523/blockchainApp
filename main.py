@@ -185,7 +185,10 @@ class Blockchain:
             'index': nextID,
             'block': newBC_json
         }
+
+
         BCjson.append(newBL)
+
         # JSONファイルの読み込み
         with open(BCpath, 'r') as file:
             # ファイルを書き込みモードで開いてJSONデータを書き込む

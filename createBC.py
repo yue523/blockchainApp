@@ -34,7 +34,7 @@ def proof_of_work(prevNonce, difficulty):
         guess_hash = hashlib.sha256(guess).hexdigest()
         if guess_hash[:difficulty] == '0' * difficulty:
             return proof
-        print(f"計測終了: {proof}")
+        # print(f"計測終了: {proof}")
         proof += 1
 
 # ブロックチェーンにブロックを追加する関数
@@ -45,11 +45,11 @@ def addtoBC(BCjson,BLFpath):
     with open(BCpath, 'r') as file:
         BCjson = json.load(file)
     lastID = BCjson[-1]['index']
+    print(f"ブロックチェーン最後のノンス値は{BCjson[-1]['block']['nonce']}")
     nextID = lastID + 1
     # 新しいブロックのjsonを作成
     with open(BLpath, "r", encoding="utf-8") as file:
         newBC_json = json.load(file)
-    print(newBC_json)
     # 追加するブロックの作成と更新
     newBL = {
         'index': nextID,
@@ -59,8 +59,8 @@ def addtoBC(BCjson,BLFpath):
     ####################################################################################
     # ここ編集
     ####################################################################################
-    # prevNonce = newBC_json[-1]['block']['nonce']
-    prevNonce = 0
+    # prevNonce = BCjson[-1]['block']['nonce']
+    prevNonce = 10
     difficulty = 3
     proof = proof_of_work(prevNonce, difficulty)
     print(f"コンセンサスアルゴリズムから{proof}を取得しました。")
@@ -79,20 +79,28 @@ def addtoBC(BCjson,BLFpath):
 
 if __name__ == "__main__":
     # ブロックチェーンの読み込み
-    BCpath = './data/blockchain/blockchain.json'
+    BCpath = './data/blockchain/sample.json'
     with open(BCpath, 'r') as json_file:
         BCjson = json.load(json_file)
     
     # フォルダ内のファイルを取得
     BLFpath = './data/block'
 
-    # ブロックへの追加
-    while True :
-        # フォルダ内にファイルが存在するかチェック
-        files_in_folder = os.listdir(BLFpath)
+    # フォルダ内にファイルが存在するかチェック
+    files_in_folder = os.listdir(BLFpath)
 
-        # ファイルが存在する場合、addtoBC関数を実行
-        if files_in_folder:
-            addtoBC(BCjson, BLFpath)
-        else:
-            break
+    # ファイルが存在する場合、addtoBC関数を実行
+    if files_in_folder:
+        addtoBC(BCjson, BLFpath)
+
+
+    # # ブロックへの追加
+    # while True :
+    #     # フォルダ内にファイルが存在するかチェック
+    #     files_in_folder = os.listdir(BLFpath)
+
+    #     # ファイルが存在する場合、addtoBC関数を実行
+    #     if files_in_folder:
+    #         addtoBC(BCjson, BLFpath)
+    #     else:
+    #         break
