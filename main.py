@@ -195,8 +195,8 @@ if __name__ == "__main__":
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.bind((HOST,PORT))
     # 出席トランザクションの作成とブロードキャスト
-    sampleTX = Transaction()
-    newTX = sampleTX.createTX(True)
+    myTX = Transaction()
+    newTX = myTX.createTX(True)
     sock.sendto(newTX, (CLIENT, PORT))
 
     #####################
@@ -248,3 +248,18 @@ if __name__ == "__main__":
         elif 'index' in recv_json:
             recvBC = Blockchain()
             recvBC.recvBC()
+
+        # qキーまたはCtrl+Cでwhile Trueを終了
+        try:
+            if input("Press 'q' to exit: ").strip().lower() == 'q':
+                print("\nExit key 'q' pressed. Exiting...")
+                break
+        except KeyboardInterrupt:
+            print("\nCtrl+C pressed. Exiting...")
+            break
+    
+    # 退席のTXを作成して終了
+    print("退席用TXを作成します。")
+    newTX = myTX.createTX(False)
+    sock.sendto(newTX, (CLIENT, PORT))
+    sock.close()
