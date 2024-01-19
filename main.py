@@ -90,7 +90,8 @@ class Block:
             temp = []
             for i in range(0, len(hashed_values), 2):
                 # 2つのハッシュを連結してハッシュ化
-                combined_hash = hashlib.sha256((hashed_values[i] + hashed_values[i + 1]).encode('utf-8')).hexdigest()
+                hashed_plused = hashed_values[i] + hashed_values[i + 1]
+                combined_hash = hashlib.sha256((hashed_plused).encode('utf-8')).hexdigest()
                 temp.append(combined_hash)
             # 新しいハッシュリストを使用してループを続行
             hashed_values = temp
