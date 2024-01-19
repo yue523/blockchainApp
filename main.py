@@ -17,11 +17,8 @@ class Transaction:
         print("トランザクションが発行、または受信しました。")
 
     # 出席状況を示す変数`status`を引数としてトランザクションを生成する
-    def createTX(self, status):
-        # 出席者の名前の作成
-        with open('info.json', 'r') as file:
-            info_json = json.load(file)
-        myName = info_json["name"]
+    def createTX(self, myName, status):
+        # トランザクションのidの作成
         TXid = str(uuid.uuid4())
         # タイムスタンプの作成
         now = datetime.now()
@@ -216,6 +213,7 @@ if __name__ == "__main__":
         info_json = json.load(file)
     # 変数にデータを格納
     myName = info_json["name"]
+    mainBC = info_json["mainBC"]
     HOST = info_json["HOST"]
     CLIENT = info_json["CLIENT"]
     PORT = info_json["PORT"]
@@ -224,14 +222,14 @@ if __name__ == "__main__":
     sock.bind((HOST,PORT))
     # 出席トランザクションの作成とブロードキャスト
     myTX = Transaction()
-    newTX = myTX.createTX(True)
+    newTX = myTX.createTX(myName, True)
     sock.sendto(newTX, (CLIENT, PORT))
 
     #####################
     # ブロックチェーンに関するプログラム
     #####################
     # ブロックチェーンの読み込み
-    BCpath = './data/blockchain/blockchain.json'
+    BCpath = './data/blockchain/' + mainBC + '.json'
     with open(BCpath, 'r') as json_file:
         BCjson = json.load(json_file)
     # フォルダ内のファイルを取得
@@ -281,16 +279,15 @@ if __name__ == "__main__":
         # qキーまたはCtrl+Cでwhile Trueを終了
         ##############################
         try:
-            if input("Press 'q' to exit: ").strip().lower() == 'q':
-                print("\nExit key 'q' pressed. Exiting...")
+            if input("qキーまたはCtrl+Cで退席します。").strip().lower() == 'q':
+                print("\nqキーが押されました。退席します。")
                 break
         except KeyboardInterrupt:
-            print("\nCtrl+C pressed. Exiting...")
+            print("\nCtrl+Cが押されました。退席します。")
             break
     
     # 退席のTXを作成して終了
-    print("退席用TXを作成します。")
-    newTX = myTX.createTX(False)
+    newTX = myTX.createTX(myName, False)
     sock.sendto(newTX, (CLIENT, PORT))
     sock.close()
-    print("プログラムを終了します。")
+    print("退席用のトランザクションを発行しました。\nプログラムを終了します。")
