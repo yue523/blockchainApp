@@ -7,7 +7,6 @@ from datetime import datetime
 import json
 import hashlib
 import uuid
-import random
 import os
 import shutil
 import glob
@@ -67,18 +66,14 @@ class Block:
         now = datetime.now()
         timestamp = int(now.timestamp())
 
+        # ブロックのIDの取得
         BLid = str(uuid.uuid4())
-        # ブロックチェーン最後のハッシュの取得
-        prevHash = ""
-        # ノンス値の作成
-        nonce = random.randint(1, 1000000)
+
         # ブロックの作成
         newBL = {
             "id": BLid,
-            "prevHash": prevHash,
             "hash": merkle,
             "timestamp": timestamp,
-            "nonce": nonce
         }
         # JSONファイルへの書き込み
         block_path = './data/block/' + BLid + '.json'

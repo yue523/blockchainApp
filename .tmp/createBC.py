@@ -27,14 +27,14 @@ def getNewBL(Blockfolder):
 
     return min_timestamp_file_path
 
-def proof_of_work(prevNonce, difficulty):
+def proof_of_work(prevNonce, hash, difficulty):
     proof = 0
     while True:
-        guess = f'{prevNonce}{proof}'.encode()
+        guess = f'{prevNonce}{hash}{proof}'.encode()
         guess_hash = hashlib.sha256(guess).hexdigest()
         if guess_hash[:difficulty] == '0' * difficulty:
             return proof
-        print(f"計測終了: {proof}")
+        # print(f"計測終了: {proof}")
         proof += 1
 
 # ブロックチェーンにブロックを追加する関数
@@ -49,22 +49,20 @@ def addtoBC(BCjson,BLFpath):
     # 新しいブロックのjsonを作成
     with open(BLpath, "r", encoding="utf-8") as file:
         newBC_json = json.load(file)
-    print(newBC_json)
     # 追加するブロックの作成と更新
     newBL = {
         'index': nextID,
         'block': newBC_json
     }
 
-    ####################################################################################
-    # ここ編集
-    ####################################################################################
-    # prevNonce = newBC_json[-1]['block']['nonce']
-    prevNonce = 0
+    prevNonce = BCjson[-1]['block']['nonce']
+    hash = newBL['block']['hash']
     difficulty = 3
-    proof = proof_of_work(prevNonce, difficulty)
-    print(f"コンセンサスアルゴリズムから{proof}を取得しました。")
-
+    nonce = proof_of_work(prevNonce, hash, difficulty)
+    print(f"コンセンサスアルゴリズムから{nonce}を取得しました。")
+    # 追加するブロックにノンス値と一つ前のハッシュ値を追加
+    newBL['block']['nonce'] = nonce
+    newBL['block']['prevhash'] = BCjson[-1]['block']['hash']
     BCjson.append(newBL)
 
     # JSONファイルの読み込み
@@ -74,12 +72,12 @@ def addtoBC(BCjson,BLFpath):
             json.dump(BCjson, write_file, indent=2)
 
     # 追加したブロックを別のフォルダに移動する
-    # BLmoveto = "./data/.block"
-    # shutil.move(BLpath, BLmoveto)
-
+    BLmoveto = "./data/.block"
+    shutil.move(BLpath, BLmoveto)
+    
 if __name__ == "__main__":
     # ブロックチェーンの読み込み
-    BCpath = './data/blockchain/blockchain.json'
+    BCpath = './data/blockchain/sample.json'
     with open(BCpath, 'r') as json_file:
         BCjson = json.load(json_file)
     

@@ -6,7 +6,6 @@ import shutil
 import uuid
 import os
 import glob
-import random
 
 ####################
 # トランザクションクラス
@@ -101,22 +100,19 @@ class Block:
     def createBL(self): 
         # マークルルートの作成
         merkle = self.calculate_merkle()
+
         # タイムスタンプの作成
         now = datetime.now()
         timestamp = int(now.timestamp())
 
+        # ブロックのIDの取得
         BLid = str(uuid.uuid4())
-        # ブロックチェーン最後のハッシュの取得
-        prevHash = ""
-        # ノンス値の作成
-        nonce = random.randint(1, 1000000)
+
         # ブロックの作成
         newBL = {
             "id": BLid,
-            "prevHash": prevHash,
             "hash": merkle,
             "timestamp": timestamp,
-            "nonce": nonce
         }
         # JSONファイルへの書き込み
         block_path = './data/block/' + BLid + '.json'
@@ -168,8 +164,18 @@ class Blockchain:
 
         return min_timestamp_file_path
 
+    # コンセンサスアルゴリズムを実行する関数
+    def proof_of_work(prevNonce, hash, difficulty):
+        proof = 0
+        while True:
+            guess = f'{prevNonce}{hash}{proof}'.encode()
+            guess_hash = hashlib.sha256(guess).hexdigest()
+            if guess_hash[:difficulty] == '0' * difficulty:
+                return proof
+            proof += 1
+
     # ブロックチェーンにブロックを追加する関数
-    def addtoBC(self, BCjson, BLFpath):
+    def addtoBC(self, BCjson,BLFpath):
         # タイムスタンプが小さいブロックを取得
         BLpath = self.setNewBL(BLFpath)
         # 新しいブロックのindexの作成
@@ -186,7 +192,14 @@ class Blockchain:
             'block': newBC_json
         }
 
-
+        prevNonce = BCjson[-1]['block']['nonce']
+        hash = newBL['block']['hash']
+        difficulty = 3
+        nonce = self.proof_of_work(prevNonce, hash, difficulty)
+        print(f"コンセンサスアルゴリズムから{nonce}を取得しました。")
+        # 追加するブロックにノンス値と一つ前のハッシュ値を追加
+        newBL['block']['nonce'] = nonce
+        newBL['block']['prevhash'] = BCjson[-1]['block']['hash']
         BCjson.append(newBL)
 
         # JSONファイルの読み込み
