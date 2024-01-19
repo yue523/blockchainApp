@@ -66,6 +66,7 @@ class Block:
         now = datetime.now()
         timestamp = int(now.timestamp())
 
+        BLid = str(uuid.uuid4())
         # ブロックチェーン最後のハッシュの取得
         prevHash = ""
         # ノンス値の作成
@@ -73,15 +74,18 @@ class Block:
         nonce = "none"
         # ブロックの作成
         newBL = {
+            "id": BLid,
             "prevHash": prevHash,
             "hash": merkle,
             "timestamp": timestamp,
             "nonce": nonce
         }
         # JSONファイルへの書き込み
-        block_path = './data/block/' + str(uuid.uuid4()) + '.json'
+        block_path = './data/block/' + BLid + '.json'
         with open(block_path, 'w') as json_file:
             json.dump(newBL, json_file, indent=2)
+        
+        return newBL
 
 if __name__ == "__main__":
 
@@ -96,8 +100,9 @@ if __name__ == "__main__":
         # dataファイル内に8つ以上のファイルがあった場合、
         # blockクラスを呼び出してcreateBLを行う.
         if TXcount >= 8:
-            newBL = Block()
-            newBL.createBL()
+            sampleBL = Block()
+            newBL = sampleBL.createBL()
+            print(f"{newBL}を作成しました。")
         # main.pyはelse分はいらない
         else :
             break

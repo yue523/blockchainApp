@@ -16,35 +16,46 @@ class Transaction:
     def __init__(self):
         print("トランザクションが発行、または受信しました。")
 
-    # 受け取ったトランザクションの処理
-    def recvTX(self):
-        print("トランザクションを受信しました。")
-        # 受け取ったトランザクションが`./data/.transaciton`にあるか
-        # トランザクションがあったら処理を終了
-        # 受け取ったトランザクションがなかったら`./data/transaction`に保存
-
     # 出席状況を示す変数`status`を引数としてトランザクションを生成する
     def createTX(self, status):
         # 出席者の名前の作成
         with open('info.json', 'r') as file:
             info_json = json.load(file)
         myName = info_json["name"]
+        TXid = str(uuid.uuid4())
         # タイムスタンプの作成
         now = datetime.now()
         timestamp = int(now.timestamp())
         # トランザクションの作成
         newTX = {
+            "id": TXid,
             "name": myName,
             "timestamp": timestamp,
             "status": status
         }
         # JSONファイルへの書き込み
-        json_path = './data/transaction/' + str(uuid.uuid4()) + '.json'
+        json_path = './data/transaction/' + TXid + '.json'
         with open(json_path, 'w') as json_path:
             json.dump(newTX, json_path, indent=2)
         
         # 作成したjsonファイルを返す
         return newTX
+
+    # 受け取ったトランザクションの処理
+    def recvTX(self, recv_json):
+        # ./data/.transaction フォルダ内のファイルを調べる
+        file_path = f'./data/.transaction/{recv_json["id"]}.json'
+
+        # 同じjsonファイルが存在する場合は処理を終了
+        if os.path.exists(file_path):
+            return
+
+        # ./data/transaction フォルダに保存する
+        destination_path = f'./data/transaction/{recv_json["id"]}.json'
+        with open(destination_path, 'w') as destination_file:
+            json.dump(recv_json, destination_file, indent=2)
+
+        print(f"id {recv_json['id']}のトランザクションが保存されました。")
 
 ####################
 # ブロッククラス
@@ -52,10 +63,7 @@ class Transaction:
 class Block:
     def __init__(self):
         print("ブロックが生成、または受信されました。\n")
-    
-    def recvBL(self):
-        print("ブロックを受信しました。\n")
-    
+
     def calculate_merkle(self):
         directory_path = "./data/transaction"
         # ディレクトリ内のJSONファイルのパスを取得
@@ -100,6 +108,7 @@ class Block:
         now = datetime.now()
         timestamp = int(now.timestamp())
 
+        BLid = str(uuid.uuid4())
         # ブロックチェーン最後のハッシュの取得
         prevHash = ""
         # ノンス値の作成
@@ -107,15 +116,34 @@ class Block:
         nonce = "none"
         # ブロックの作成
         newBL = {
+            "id": BLid,
             "prevHash": prevHash,
             "hash": merkle,
             "timestamp": timestamp,
             "nonce": nonce
         }
         # JSONファイルへの書き込み
-        block_path = './data/block/' + str(uuid.uuid4()) + '.json'
+        block_path = './data/block/' + BLid + '.json'
         with open(block_path, 'w') as json_file:
             json.dump(newBL, json_file, indent=2)
+        
+        return newBL
+
+    def recvBL(self, recv_json):
+        # ./data/.block フォルダ内のファイルを調べる
+        file_path = f'./data/.block/{recv_json["id"]}.json'
+
+        # 同じjsonファイルが存在する場合は処理を終了
+        if os.path.exists(file_path):
+            print(f"block with id {recv_json['id']} already exists.")
+            return
+
+        # ./data/block フォルダに保存する
+        destination_path = f'./data/block/{recv_json["id"]}.json'
+        with open(destination_path, 'w') as destination_file:
+            json.dump(recv_json, destination_file, indent=2)
+
+        print(f"block with id {recv_json['id']} saved successfully.")
 
 ####################
 # ブロックチェーンクラス
@@ -123,9 +151,6 @@ class Block:
 class Blockchain:
     def __init__(self):
         print("ブロックチェーンが更新されます。\n")
-        
-    def recvBC(self):
-        print("ブロックチェーンを受信しました。\n")
 
     # ブロックプール内から一番小さいタイムスタンプのブロックを取得
     def setNewBL(self, Blockfolder):
@@ -175,6 +200,9 @@ class Blockchain:
         BLmoveto = "./data/.block"
         shutil.move(BLpath, BLmoveto)
 
+    def recvBC(self, recv_json):
+        print(f"{recv_json}のBCを受信しました。\n")
+
 ####################
 # main関数
 ####################
@@ -219,8 +247,8 @@ if __name__ == "__main__":
         TXfiles = glob.glob(os.path.join("./data", '*.json'))
         TXcount = len(TXfiles)
         if TXcount >= 8:
-            newBL = Block()
-            newBL.createBL()
+            myBL = Block()
+            newBL = myBL.createBL()
         
         ################################
         # ブロックチェーンにブロックを追加
@@ -235,21 +263,23 @@ if __name__ == "__main__":
         ################################
         # データをTX、BL、BCに仕分けして保存する
         ################################
-        # ソケットを受け取り辞書にでコード
+        # ソケットを受け取り辞書にデコード
         recv_data, address = sock.recvfrom(4096)
         recv_json = json.loads(recv_data)
         # それぞれに存在するキーで仕分けしてそれぞれの処理を行う
         if 'status' in recv_json:
             recvTX = Transaction()
-            recvTX.recvTX()
+            recvTX.recvTX(recv_json)
         elif 'hash' in recv_json:
             recvBL = Block()
-            recvBL.recvBL()
+            recvBL.recvBL(recv_json)
         elif 'index' in recv_json:
             recvBC = Blockchain()
-            recvBC.recvBC()
+            recvBC.recvBC(recv_json)
 
+        ##############################
         # qキーまたはCtrl+Cでwhile Trueを終了
+        ##############################
         try:
             if input("Press 'q' to exit: ").strip().lower() == 'q':
                 print("\nExit key 'q' pressed. Exiting...")
@@ -263,3 +293,4 @@ if __name__ == "__main__":
     newTX = myTX.createTX(False)
     sock.sendto(newTX, (CLIENT, PORT))
     sock.close()
+    print("プログラムを終了します。")

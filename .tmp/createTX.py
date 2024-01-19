@@ -7,32 +7,32 @@ from datetime import datetime
 import json
 import uuid
 
-class transaction:
-    def __init__(self,name):
-        self.name = name
+class Transaction:
 
-    def createTX(self):
-        # 名前の収得
-        myName = self.name
+    # 出席状況を示す変数`status`を引数としてトランザクションを生成する
+    def createTX(self, status):
+        # 出席者の名前の作成
+        with open('info.json', 'r') as file:
+            info_json = json.load(file)
+        myName = info_json["name"]
+        TXid = str(uuid.uuid4())
         # タイムスタンプの作成
-        now = datetime.utcnow()
+        now = datetime.now()
         timestamp = int(now.timestamp())
-        # 出席記録の取得
-        status = "attendance"
         # トランザクションの作成
-        NewTX = {
+        newTX = {
+            "id": TXid,
             "name": myName,
             "timestamp": timestamp,
             "status": status
         }
-
         # JSONファイルへの書き込み
-        json_path = './data/transaction/' + str(uuid.uuid4()) + '.json'
-        # json_path = './data/transaction/' + str(timestamp) + '.json'
+        json_path = './data/transaction/' + TXid + '.json'
         with open(json_path, 'w') as json_path:
-            json.dump(NewTX, json_path, indent=2)
-
-        return NewTX
+            json.dump(newTX, json_path, indent=2)
+        
+        # 作成したjsonファイルを返す
+        return newTX 
 
 if __name__ == "__main__":
 
@@ -41,7 +41,7 @@ if __name__ == "__main__":
     name = 'Yuki Kato'
 
     # 出席TXの作成とブロードキャスト
-    sampleTX = transaction(name)
-    newTX = sampleTX.createTX()
+    sampleTX = Transaction()
+    newTX = sampleTX.createTX(True)
 
     print(str(newTX)+"を作成しました。")
