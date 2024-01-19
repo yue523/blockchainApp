@@ -197,8 +197,25 @@ class Blockchain:
         BLmoveto = "./data/.block"
         shutil.move(BLpath, BLmoveto)
 
+    # 受け取ったブロックチェーンを一時ファイルの.blockchainに保存する関数
     def recvBC(self, recv_json):
-        print(f"{recv_json}のBCを受信しました。\n")
+        # UUIDを生成
+        unique_id = str(uuid.uuid4())
+
+        # 保存先ディレクトリが存在しない場合は作成
+        save_directory = "./data/.blockchain"
+        if not os.path.exists(save_directory):
+            os.makedirs(save_directory)
+
+        # JSONファイルのパスを構築
+        save_path = os.path.join(save_directory, f"{unique_id}.json")
+
+        # 辞書をJSONファイルとして保存
+        with open(save_path, 'w') as json_file:
+            json.dump(recv_json, json_file, indent=2)
+
+        print(f"{recv_json}が保存されました。")
+
 
 ####################
 # main関数
@@ -239,32 +256,26 @@ if __name__ == "__main__":
     # 常時実行プログラム
     ######################
     while True:
-        ################################
-        # 8つ以上のTXがあった場合、ブロックを作成
-        ################################
+
+        # transactionフォルダ内のtransactionの個数を確認
         TXfiles = glob.glob(os.path.join("./data", '*.json'))
         TXcount = len(TXfiles)
+        # 8つ以上のトランザクションがあるならブロックを作成する
         if TXcount >= 8:
             myBL = Block()
             newBL = myBL.createBL()
         
-        ################################
-        # ブロックチェーンにブロックを追加
-        ################################
-        # フォルダ内にファイルが存在するかチェック
+        # blockフォルダ内にブロックが存在するかチェック
         BLfolder = os.listdir(BLFpath)
-        # ファイルが存在する場合、blockchainクラスのaddtoBC関数を実行
         if BLfolder:
+            # ブロックが存在する時ブロックチェーンに追加
             newBC = Blockchain()
             newBC.addtoBC(BCjson, BLFpath)        
 
-        ################################
-        # データをTX、BL、BCに仕分けして保存する
-        ################################
         # ソケットを受け取り辞書にデコード
         recv_data, address = sock.recvfrom(4096)
         recv_json = json.loads(recv_data)
-        # それぞれに存在するキーで仕分けしてそれぞれの処理を行う
+        # 受け取って変換した辞書をTX、BL、BCに仕分けして保存する
         if 'status' in recv_json:
             recvTX = Transaction()
             recvTX.recvTX(recv_json)
@@ -275,9 +286,7 @@ if __name__ == "__main__":
             recvBC = Blockchain()
             recvBC.recvBC(recv_json)
 
-        ##############################
         # qキーまたはCtrl+Cでwhile Trueを終了
-        ##############################
         try:
             if input("qキーまたはCtrl+Cで退席します。").strip().lower() == 'q':
                 print("\nqキーが押されました。退席します。")
