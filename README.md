@@ -26,7 +26,7 @@
 | `timestamp`   | トランザクションが作成された時刻    |
 | `status`   | 出席者の状態    |
 
-### 3. block.json
+### 3. `block.json`
 
 `block.json`はブロックにあたる構造体である。このファイルは`data/block`ファイル内にトランザクションプールとして保存される。
 
