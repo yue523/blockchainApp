@@ -23,8 +23,8 @@ class Transaction:
         # トランザクションがあったら処理を終了
         # 受け取ったトランザクションがなかったら`./data/transaction`に保存
 
-    # トランザクションを生成する関数
-    def createTX(self):
+    # 出席状況を示す変数`status`を引数としてトランザクションを生成する
+    def createTX(self, status):
         # 出席者の名前の作成
         with open('info.json', 'r') as file:
             info_json = json.load(file)
@@ -32,8 +32,6 @@ class Transaction:
         # タイムスタンプの作成
         now = datetime.now()
         timestamp = int(now.timestamp())
-        # 出席記録の取得
-        status = "attendance"
         # トランザクションの作成
         newTX = {
             "name": myName,
@@ -198,7 +196,7 @@ if __name__ == "__main__":
     sock.bind((HOST,PORT))
     # 出席トランザクションの作成とブロードキャスト
     sampleTX = Transaction()
-    newTX = sampleTX.createTX()
+    newTX = sampleTX.createTX(True)
     sock.sendto(newTX, (CLIENT, PORT))
 
     #####################
