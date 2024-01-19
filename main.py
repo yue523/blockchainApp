@@ -222,9 +222,8 @@ class Blockchain:
 ####################
 if __name__ == "__main__":
 
-    #####################
     # 出席システムの初期設定
-    #####################
+    ###########################################
     # info.jsonファイルを読み込む
     with open('info.json', 'r') as file:
         info_json = json.load(file)
@@ -242,9 +241,8 @@ if __name__ == "__main__":
     newTX = myTX.createTX(myName, True)
     sock.sendto(newTX, (CLIENT, PORT))
 
-    #####################
     # ブロックチェーンに関するプログラム
-    #####################
+    ##########################################
     # ブロックチェーンの読み込み
     BCpath = './data/blockchain/' + mainBC + '.json'
     with open(BCpath, 'r') as json_file:
@@ -252,9 +250,8 @@ if __name__ == "__main__":
     # フォルダ内のファイルを取得
     BLFpath = './data/block'
 
-    ######################
     # 常時実行プログラム
-    ######################
+    #########################################
     while True:
 
         # transactionフォルダ内のtransactionの個数を確認
