@@ -7,6 +7,7 @@ from datetime import datetime
 import json
 import hashlib
 import uuid
+import random
 import os
 import shutil
 import glob
@@ -70,8 +71,7 @@ class Block:
         # ブロックチェーン最後のハッシュの取得
         prevHash = ""
         # ノンス値の作成
-        # nonce = random.randomint(1, 1000000)
-        nonce = "none"
+        nonce = random.randint(1, 1000000)
         # ブロックの作成
         newBL = {
             "id": BLid,

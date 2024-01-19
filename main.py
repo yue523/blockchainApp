@@ -6,7 +6,7 @@ import shutil
 import uuid
 import os
 import glob
-# import random
+import random
 
 ####################
 # トランザクションクラス
@@ -109,8 +109,7 @@ class Block:
         # ブロックチェーン最後のハッシュの取得
         prevHash = ""
         # ノンス値の作成
-        # nonce = random.randomint(1, 1000000)
-        nonce = "none"
+        nonce = random.randint(1, 1000000)
         # ブロックの作成
         newBL = {
             "id": BLid,
