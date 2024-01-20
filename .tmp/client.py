@@ -12,7 +12,7 @@ sendPort = 54321
 # ソケットの作成
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-with open('info.json', 'r') as file:
+with open('test.json', 'r') as file:
     info_json = json.load(file)
 
 # メッセージの送信
