@@ -4,7 +4,7 @@ import json
 # ソケットの作成
 sender_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-recvIP ='192.168.3.105'
+recvIP ='192.168.3.255'
 
 # 送信先のブロードキャストIPアドレスとポート
 receiver_broadcast_address = (recvIP, 12345)
