@@ -5,7 +5,7 @@ def start_server():
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
     # ホストとポートの設定
-    host = 'localhost'
+    host = '192.168.3.205'
     port = 12345
     server_address = (host, port)
 

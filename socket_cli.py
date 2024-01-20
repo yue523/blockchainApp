@@ -5,7 +5,7 @@ def start_client():
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
     # サーバーのホストとポート
-    server_host = 'localhost'
+    server_host = '192.168.3.105'
     server_port = 12345
     server_address = (server_host, server_port)
 
