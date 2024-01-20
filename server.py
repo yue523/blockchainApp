@@ -13,8 +13,8 @@ server_socket.bind((myIP, myPort))
 print(f"サーバーが {myIP}:{myPort} で待機中...")
 
 # メッセージの受信
-data, client_address = server_socket.recvfrom(1024)
-print(f"クライアントから受信したメッセージ: {data.decode()}")
+data, cli = server_socket.recvfrom(1024)
+print(f"{cli}から以下のデータを受信しました。/n{data.decode()}")
 
 # ソケットのクローズ
 server_socket.close()

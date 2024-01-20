@@ -1,4 +1,5 @@
 import socket
+import json
 
 # サーバーのIPアドレスとポート番号
 recvIP = '192.168.3.105'
@@ -11,8 +12,11 @@ sendPort = 54321
 # ソケットの作成
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
+with open('info.json', 'r') as file:
+    info_json = json.load(file)
+
 # メッセージの送信
-message = f"{sendIP}からメッセージを受信しました。"
+message = info_json
 client_socket.sendto(message.encode(), (recvIP, recvPort))
 
 # ソケットのクローズ
