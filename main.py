@@ -275,14 +275,10 @@ if __name__ == "__main__":
         # 8つ以上のトランザクションがあるならブロックを作成する
         if TXcount >= 8:
             myBL = Block()
-            newBL = myBL.createBL()
-        
+            newBL = myBL.createBL()      
+
         # blockフォルダ内にブロックが存在するかチェック
         BLfolder = os.listdir(BLFpath)
-        if BLfolder:
-            # ブロックが存在する時ブロックチェーンに追加
-            newBC = Blockchain()
-            newBC.addtoBC(BCjson, BLFpath)        
 
         # ソケットを受け取り辞書にデコード
         recv_data, address = sock.recvfrom(4096)
@@ -297,6 +293,15 @@ if __name__ == "__main__":
         elif 'index' in recv_json:
             recvBC = Blockchain()
             recvBC.recvBC(recv_json)
+
+        if BLfolder:
+            print("新しいブロックが検知されました。")
+            if input("mキーでマイニングをします。").strip().lower == 'm':
+                # ブロックが存在する時ブロックチェーンに追加
+                newBC = Blockchain()
+                newBC.addtoBC(BCjson, BLFpath)
+            elif input("nキーでマイニングをスキップします。").strip().lower == 'n':
+                break
 
         # qキーまたはCtrl+Cでwhile Trueを終了
         try:
