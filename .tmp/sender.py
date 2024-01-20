@@ -1,23 +1,26 @@
 import socket
 import json
 
-# 送信先のIPアドレスとポート番号
-receiver_ip = "192.168.3.55"
-port = 12345
-
-# JSONファイル読み込み
-with open('./test.json', 'r') as file:
-    data = json.load(file)
-
 # ソケットの作成
+server_ip = "192.168.3.55"
+server_port = 12346
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+sock.bind((server_ip, server_port))
 
-# ブロードキャスト用のアドレス設定
-sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+# ./test.jsonの読み込み
+with open('./test.json', 'r') as file:
+    data_to_send = json.load(file)
 
-# データのシリアライズと送信
-message = json.dumps(data).encode('utf-8')
-sock.sendto(message, (receiver_ip, port))
+# サーバーのIPアドレスとポート番号
+server_ip = "192.168.3.105"
+server_port = 12345
 
-# ソケットのクローズ
+# ソケット通信でデータを受信
+received_data, addr = sock.recvfrom(1024)
+print("Received data from {}: {}".format(addr, received_data.decode()))
+
+# ソケット通信でデータを送信
+sock.sendto(json.dumps(data_to_send).encode(), (server_ip, server_port))
+
+# ソケットを閉じる
 sock.close()
