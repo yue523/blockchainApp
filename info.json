@@ -1,0 +1,7 @@
+{
+  "name": "Yuki Kato",
+  "mainBC": "sample",
+  "HOST": "127.0.1.1",
+  "CLIENT": "192.168.3.255",
+  "PORT": 50000
+}
