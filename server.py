@@ -1,16 +1,16 @@
 import socket
 
 # サーバーのIPアドレスとポート番号
-server_ip = '192.168.3.105'
-server_port = 12345
+myIP = '192.168.3.105'
+myPort = 12345
 
 # ソケットの作成
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 # バインド
-server_socket.bind((server_ip, server_port))
+server_socket.bind((myIP, myPort))
 
-print(f"サーバーが {server_ip}:{server_port} で待機中...")
+print(f"サーバーが {myIP}:{server_port} で待機中...")
 
 # メッセージの受信
 data, client_address = server_socket.recvfrom(1024)
