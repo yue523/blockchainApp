@@ -10,7 +10,7 @@ server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 # バインド
 server_socket.bind((myIP, myPort))
 
-print(f"サーバーが {myIP}:{server_port} で待機中...")
+print(f"サーバーが {myIP}:{myPort} で待機中...")
 
 # メッセージの受信
 data, client_address = server_socket.recvfrom(1024)
