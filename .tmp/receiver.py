@@ -4,8 +4,10 @@ import json
 # ソケットの作成
 receiver_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
+myIP = '192.168.3.105'
+
 # バインドするIPアドレスとポート
-receiver_address = ('192.168.3.105', 12345)
+receiver_address = (myIP, 12345)
 receiver_socket.bind(receiver_address)
 
 # 受信と処理

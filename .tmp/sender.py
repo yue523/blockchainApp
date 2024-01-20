@@ -4,8 +4,10 @@ import json
 # ソケットの作成
 sender_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
+recvIP ='192.168.3.105'
+
 # 送信先のブロードキャストIPアドレスとポート
-receiver_broadcast_address = ('192.168.3.255', 12345)
+receiver_broadcast_address = (recvIP, 12345)
 
 # 送信するデータの読み込み
 with open('./test.json', 'r') as file:
