@@ -2,25 +2,19 @@ import socket
 import json
 
 # ソケットの作成
-server_ip = "192.168.3.105"
-server_port = 12345
-sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-sock.bind((server_ip, server_port))
+receiver_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-# ./test.jsonの読み込み
-with open('./test.json', 'r') as file:
-    data_to_send = json.load(file)
+# バインドするIPアドレスとポート
+receiver_address = ('192.168.3.105', 12345)
+receiver_socket.bind(receiver_address)
 
-# クライアントのIPアドレスとポート番号
-client_ip = "192.168.3.55"
-client_port = 12346
+# 受信と処理
+while True:
+    data, sender_address = receiver_socket.recvfrom(1024)
+    decoded_data = json.loads(data.decode('utf-8'))
+    
+    # 受信したデータの処理（ここでは印刷）
+    print(f"Received data from {sender_address}: {decoded_data}")
 
-# ソケット通信でデータを送信
-sock.sendto(json.dumps(data_to_send).encode(), (client_ip, client_port))
-
-# ソケット通信でデータを受信
-received_data, addr = sock.recvfrom(1024)
-print("Received data from {}: {}".format(addr, received_data.decode()))
-
-# ソケットを閉じる
-sock.close()
+# ソケットのクローズ（通常はここに到達しない）
+receiver_socket.close()
