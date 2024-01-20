@@ -12,7 +12,7 @@ sendPort = 54321
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 # メッセージの送信
-message = "Hello, server!"
+message = f"{sendIP}からメッセージを受信しました。"
 client_socket.sendto(message.encode(), (recvIP, recvPort))
 
 # ソケットのクローズ
