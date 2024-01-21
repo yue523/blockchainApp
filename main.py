@@ -5,7 +5,9 @@ import socket
 import shutil
 import uuid
 import os
+import threading
 import glob
+import sys
 
 ####################
 # トランザクションクラス
@@ -232,6 +234,56 @@ class Blockchain:
 
         print(f"{recv_json}が保存されました。")
 
+def exit_process():
+    # 退席のTXを作成して終了
+    newTX = myTX.createTX(myName, False)
+    sock.sendto(newTX, (Client, Port))
+    sock.close()
+    print("退席用のトランザクションを発行しました。\nプログラムを終了します。")
+    sys.exit(0)
+
+# トランザクションからブロックの作成
+def create_block():
+    TXfiles = glob.glob(os.path.join("./data", '*.json'))
+    TXcount = len(TXfiles)
+
+    if TXcount >= 8:
+        myBL = Block()
+        newBL = myBL.createBL()
+        print(f"{newBL}を発行しました。")
+
+# ソケット通信で受け取った辞書の仕分け
+def process_socket_data(sock):
+    recv_data, address = sock.recvfrom(4096)
+    recv_json = json.loads(recv_data)
+
+    if 'status' in recv_json:
+        recvTX = Transaction()
+        recvTX.recvTX(recv_json)
+    elif 'hash' in recv_json:
+        recvBL = Block()
+        recvBL.recvBL(recv_json)
+    elif 'index' in recv_json:
+        recvBC = Blockchain()
+        recvBC.recvBC(recv_json)
+
+# キーボードの処理
+def handle_keyboard_input():
+    print("mキーでマイニング、qキーで退室")
+
+    while True:
+        user_input = input()
+        if user_input.lower() == 'q':
+            print("qキーが押されました。退席します。")
+            exit_process()
+        elif user_input.lower() == 'm':
+            print("マイニングを実行します。")
+            BLfolder = os.listdir(BLFpath)
+            if BLfolder:
+                newBC = Blockchain()
+                newBC.addtoBC(BCjson, BLFpath)
+            else:
+                print("マイニングをスキップします.")
 
 ####################
 # main関数
@@ -268,47 +320,14 @@ if __name__ == "__main__":
     #########################################
     # 常時実行プログラム
     while True:
+        # スレッドを作成して実行
+        threads = [
+            threading.Thread(target=create_block),
+            threading.Thread(target=process_socket_data, args=(sock,)),
+            threading.Thread(target=handle_keyboard_input),
+        ]
+        for thread in threads:
+            thread.start()
 
-        # transactionフォルダ内のtransactionの個数を確認
-        TXfiles = glob.glob(os.path.join("./data", '*.json'))
-        TXcount = len(TXfiles)
-        # 8つ以上のトランザクションがあるならブロックを作成する
-        if TXcount >= 8:
-            myBL = Block()
-            newBL = myBL.createBL()
-        
-        # blockフォルダ内にブロックが存在するかチェック
-        BLfolder = os.listdir(BLFpath)
-        if BLfolder:
-            # ブロックが存在する時ブロックチェーンに追加
-            newBC = Blockchain()
-            newBC.addtoBC(BCjson, BLFpath)        
-
-        # ソケットを受け取り辞書にデコード
-        recv_data, address = sock.recvfrom(4096)
-        recv_json = json.loads(recv_data)
-        # 受け取って変換した辞書をTX、BL、BCに仕分けして保存する
-        if 'status' in recv_json:
-            recvTX = Transaction()
-            recvTX.recvTX(recv_json)
-        elif 'hash' in recv_json:
-            recvBL = Block()
-            recvBL.recvBL(recv_json)
-        elif 'index' in recv_json:
-            recvBC = Blockchain()
-            recvBC.recvBC(recv_json)
-
-        # qキーまたはCtrl+Cでwhile Trueを終了
-        try:
-            if input("qキーまたはCtrl+Cで退席します。").strip().lower() == 'q':
-                print("\nqキーが押されました。退席します。")
-                break
-        except KeyboardInterrupt:
-            print("\nCtrl+Cが押されました。退席します。")
-            break
-    
-    # 退席のTXを作成して終了
-    newTX = myTX.createTX(myName, False)
-    sock.sendto(newTX, (Client, Port))
-    sock.close()
-    print("退席用のトランザクションを発行しました。\nプログラムを終了します。")
+        for thread in threads:
+            thread.join()
