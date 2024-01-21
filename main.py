@@ -320,12 +320,13 @@ if __name__ == "__main__":
     #########################################
     # 常時実行プログラム
     while True:
-        # スレッドを作成して実行
+        # スレッドを作成
         threads = [
             threading.Thread(target=create_block),
             threading.Thread(target=process_socket_data, args=(sock,)),
             threading.Thread(target=handle_keyboard_input),
         ]
+        # スレッドの実行
         for thread in threads:
             thread.start()
 
