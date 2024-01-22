@@ -16,6 +16,7 @@ host_ip = socket.gethostbyname(socket.gethostname())
 data = {
     "name": user_input, 
     "HOST": host_ip,
+    "mainBC": "sample",
     "CLIENT": '192.168.3.255',
     "PORT": 50000
     }
