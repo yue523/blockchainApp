@@ -299,7 +299,8 @@ if __name__ == "__main__":
     myName = info_json["name"]
     mainBC = info_json["mainBC"]
     Host = info_json["HOST"]
-    Client = info_json["CLIENT"]
+    # Client = info_json["CLIENT"]
+    Client = '192.168.3.105'
     Port = info_json["PORT"]
     # ソケットの作成とバインド
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
