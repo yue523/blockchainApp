@@ -311,7 +311,8 @@ if __name__ == "__main__":
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
     encoded_newTX = json.dumps(newTX).encode('utf-8')
     print(encoded_newTX)
-    sock.sendto(encoded_newTX, (Client, Port))
+    recvAD = (Client, Port)
+    sock.sendto(encoded_newTX, recvAD)
     sock.bind((Host,Port))
 
     ##########################################
