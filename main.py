@@ -300,7 +300,7 @@ if __name__ == "__main__":
     mainBC = info_json["mainBC"]
     Host = info_json["HOST"]
     # Client = info_json["CLIENT"]
-    Client = '192.168.3.105'
+    Client = '192.168.3.255'
     # Port = info_json["PORT"]
     Port = 12345
     # ソケットの作成とバインド
@@ -313,6 +313,9 @@ if __name__ == "__main__":
     encoded_newTX = json.dumps(newTX).encode('utf-8')
     print(encoded_newTX)
     recvAD = (Client, Port)
+    ################################
+    # 問題点
+    ################################
     try:
         sock.sendto(encoded_newTX, recvAD)
     except OSError as e:
