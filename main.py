@@ -305,6 +305,7 @@ if __name__ == "__main__":
     Port = 12345
     # ソケットの作成とバインド
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.bind((Host,Port))
     # 出席トランザクションの作成とブロードキャスト
     myTX = Transaction()
     newTX = myTX.createTX(myName, True)
@@ -312,8 +313,10 @@ if __name__ == "__main__":
     encoded_newTX = json.dumps(newTX).encode('utf-8')
     print(encoded_newTX)
     recvAD = (Client, Port)
-    sock.sendto(encoded_newTX, recvAD)
-    sock.bind((Host,Port))
+    try:
+        sock.sendto(encoded_newTX, recvAD)
+    except OSError as e:
+        print(f"エラー: {e}")
 
     ##########################################
     # ブロックチェーンの読み込み
