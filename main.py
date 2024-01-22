@@ -300,8 +300,9 @@ if __name__ == "__main__":
     mainBC = info_json["mainBC"]
     Host = info_json["HOST"]
     # Client = info_json["CLIENT"]
-    Client = '192.168.3.105'
-    Port = info_json["PORT"]
+    Client = '192.168.3.55'
+    # Port = info_json["PORT"]
+    Port = 12345
     # ソケットの作成とバインド
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.bind((Host,Port))
