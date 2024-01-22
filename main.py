@@ -310,6 +310,7 @@ if __name__ == "__main__":
     newTX = myTX.createTX(myName, True)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
     encoded_newTX = json.dumps(newTX).encode('utf-8')
+    print(encoded_newTX)
     sock.sendto(encoded_newTX, (Client, Port))
     sock.bind((Host,Port))
 

@@ -18,6 +18,7 @@ sender_socket.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
 
 # データの送信
 encoded_data = json.dumps(data_to_send).encode('utf-8')
+print(encoded_data)
 sender_socket.sendto(encoded_data, receiver_broadcast_address)
 
 # ソケットのクローズ
