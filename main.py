@@ -307,7 +307,8 @@ if __name__ == "__main__":
     # 出席トランザクションの作成とブロードキャスト
     myTX = Transaction()
     newTX = myTX.createTX(myName, True)
-    sock.sendto(newTX, (Client, Port))
+    encoded_newTX = json.dumps(newTX).encode('utf-8')
+    sock.sendto(encoded_newTX, (Client, Port))
 
     ##########################################
     # ブロックチェーンの読み込み
