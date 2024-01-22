@@ -305,13 +305,13 @@ if __name__ == "__main__":
     Port = 12345
     # ソケットの作成とバインド
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.bind((Host,Port))
     # 出席トランザクションの作成とブロードキャスト
     myTX = Transaction()
     newTX = myTX.createTX(myName, True)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
     encoded_newTX = json.dumps(newTX).encode('utf-8')
     sock.sendto(encoded_newTX, (Client, Port))
+    sock.bind((Host,Port))
 
     ##########################################
     # ブロックチェーンの読み込み
