@@ -307,6 +307,7 @@ if __name__ == "__main__":
     # 出席トランザクションの作成とブロードキャスト
     myTX = Transaction()
     newTX = myTX.createTX(myName, True)
+    sock.setopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
     encoded_newTX = json.dumps(newTX).encode('utf-8')
     sock.sendto(encoded_newTX, (Client, Port))
 
