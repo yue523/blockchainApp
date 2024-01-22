@@ -234,6 +234,10 @@ class Blockchain:
 
         print(f"{recv_json}が保存されました。")
 
+    # 正当なブロックチェーンを選択する関数
+    def choiceBC():
+        print("これから書く")
+
 def exit_process():
     # 退席のTXを作成して終了
     newTX = myTX.createTX(myName, False)
