@@ -16,9 +16,9 @@ host_ip = socket.gethostbyname(socket.gethostname())
 data = {
     "name": user_input, 
     "HOST": host_ip,
-    "mainBC": "sample",
+    "mainBC": "main",
     "CLIENT": '192.168.3.255',
-    "PORT": 50000
+    "PORT": 12345
     }
 
 with open("info.json", "w") as json_file:
