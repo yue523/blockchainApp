@@ -60,7 +60,7 @@ def addtoBC(BCjson,BLFpath):
     hash = newBL['block']['hash']
     difficulty = 3
     nonce = proof_of_work(prevNonce, hash, difficulty)
-    print(f"コンセンサスアルゴリズムから{nonce}を取得しました。")
+    print(f"値{nonce}によってブロックがチェーンに追加されました。")
     # 追加するブロックにノンス値と一つ前のハッシュ値を追加
     newBL['block']['nonce'] = nonce
     newBL['block']['prevhash'] = BCjson[-1]['block']['hash']
@@ -78,9 +78,7 @@ def addtoBC(BCjson,BLFpath):
     
 if __name__ == "__main__":
     # ブロックチェーンの読み込み
-    BCFpath = './data/blockchain'
-    BCname = str(uuid.uuid4())
-    BCpath = BCFpath + BCname
+    BCpath = './data/blockchain/sample.json'
     with open(BCpath, 'r') as json_file:
         BCjson = json.load(json_file)
     
