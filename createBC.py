@@ -5,6 +5,7 @@ import hashlib
 import os
 import json
 import shutil
+import uuid
 
 # ブロックプール内から一番小さいタイムスタンプのブロックを取得
 def getNewBL(Blockfolder):
@@ -77,7 +78,9 @@ def addtoBC(BCjson,BLFpath):
     
 if __name__ == "__main__":
     # ブロックチェーンの読み込み
-    BCpath = './data/blockchain/sample.json'
+    BCFpath = './data/blockchain'
+    BCname = str(uuid.uuid4())
+    BCpath = BCFpath + BCname
     with open(BCpath, 'r') as json_file:
         BCjson = json.load(json_file)
     
