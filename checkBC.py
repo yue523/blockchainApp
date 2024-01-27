@@ -23,6 +23,21 @@ BCtmpPath = './data/.blockchain'
 # フォルダ内のすべてのファイル名を取得
 file_names = [f for f in os.listdir(BCtmpPath) if f.endswith('.json')]
 
+def find_matching_hash(mainBC, tmpBC):
+    main_hash = mainBC[-1]["block"]["hash"]
+    
+    for block in tmpBC:
+        if "hash" in block["block"] and block["block"]["hash"] == main_hash:
+            print("一致した")
+            return
+    
+    # 一致しない場合、mainBCの前のブロックを再帰的に検索
+    if len(mainBC) > 1:
+        mainBC.pop()  # 最後のブロックを削除して再帰的に検索
+        find_matching_hash(mainBC, tmpBC)
+    else:
+        print("一致しなかった")
+
 # 各ファイルの中身を読み取り
 for file_name in file_names:
     file_path = os.path.join(BCtmpPath, file_name)
@@ -35,7 +50,6 @@ for file_name in file_names:
         print(f"{file_name}を表示します。")
         # インデントを指定してきれいに表示
         print(tmpBC)
-
 
 '''
 `./data/blockchain/main.json`の中身を取得
@@ -58,30 +72,5 @@ with open(mainBCPath, 'r') as file:
 mainBCとtmpBCの比較
 '''
 
-# mainBCの一番最後のblockのhash
-
-
-# tmpBCの中でmainBCの最後のhashが存在するか確認
-same_index = None
-for index, block_data in enumerate(tmpBC):
-    if 'hash' in block_data['block'] and block_data['block']['hash'] == mainBC_last_hash:
-        same_index = index + 1  # インデックスは1から始まるため+1する
-        break
-
-if same_index is not None:
-    if same_index == tmpBC[-1]['index']:
-        # same_indがtmpBCの最後のindexと一致する場合、tmpBCをmainBCとして出力
-        with open(mainBCPath, 'w') as file:
-            json.dump(tmpBC, file, indent=2) 
-        print("tmpBCをmainBCとして出力:")
-        print(tmpBC)
-    else:
-        # same_indがtmpBCの最後のindexと一致しない場合、tmpBCをconfBCとして保存
-        print("tmpBCをconfBCとして保存:")
-        # ここでtmpBCを保存する処理を追加する
-        with open(confBCPath, 'w') as file:
-            json.dump(tmpBC, file, indent=2)
-
-    print("same_index:", same_index)
-else:
-    print("mainBCの最後のhashがtmpBCに見つかりませんでした。")
+# 関数を呼び出し
+find_matching_hash(mainBC, tmpBC)
