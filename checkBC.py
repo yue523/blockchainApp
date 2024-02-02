@@ -29,7 +29,8 @@ for file_name in file_names:
     with open(file_path, 'r') as file:
         # JSONファイルを読み取り
         data = json.load(file)
-        tmpBC = data  # 修正: json.dumpsを使わずにデータそのものを代入
+        # 修正: json.dumpsを使わずにデータそのものを代入
+        tmpBC = data
 
 mainBCPath = './data/blockchain/main.json'
 confBCPath = './data/blockchain/conf.json'
