@@ -41,3 +41,18 @@ with open(mainBCPath, 'r') as file:
     mainBC = data
 
 find_matching_hash(mainBC, tmpBC)
+
+'''
+indexの値がmain.jsonの一番最後のブロックである場合
+対立がないため、そのままmainBC.jsonとして更新
+'''
+
+'''
+indexの値がmain.jsonの一番最後のブロックではない場合
+対立がそんざいするためためとりあえずそのことを出力する。
+
+対立するブロックチェーンは別名でconf1.json(仮)ちう名前で./data/blockchainへと保存される。
+
+ブロックチェーンへブロックが一定数追加された後、もう一度その2つのブロックチェーンの長さを比較する。
+ブロックチェーンの長さが6以上であった場合長さが短いブロックチェーンは消える。
+'''
