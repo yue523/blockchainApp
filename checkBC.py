@@ -11,7 +11,6 @@ file_names = [f for f in os.listdir(BCtmpPath) if f.endswith('.json')]
 
 def find_matching_hash(mainBC, tmpBC):
     main_hash = mainBC[-1]["block"]["hash"]
-    dd
     for block in tmpBC:
         if "hash" in block["block"] and block["block"]["hash"] == main_hash:
             print(f"index {block['index']} で一致しました。")
@@ -38,7 +37,7 @@ confBCPath = './data/blockchain/conf.json'
 with open(mainBCPath, 'r') as file:
     data = json.load(file)
     mainBC_last_hash = data[-1]['block']['hash']
-    # 修正: json.dumpsを使わずにデータそのものを代入
+    
     mainBC = data
 
 find_matching_hash(mainBC, tmpBC)
